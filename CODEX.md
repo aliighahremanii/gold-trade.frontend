@@ -1,4 +1,4 @@
-# AGENTS.md — Frontend Agent Instructions
+# CODEX.md — Frontend Agent Instructions
 
 This file is the canonical instruction source for coding agents working on the Trade Platform frontend.
 
