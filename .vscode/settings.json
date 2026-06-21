@@ -1,0 +1,7 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "command": true,
+        "bun": true,
+        "bunx": true
+    }
+}
