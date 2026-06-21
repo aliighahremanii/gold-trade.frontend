@@ -7,7 +7,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await requireAdminSession("/admin/dashboard");
+  await requireAdminSession();
 
   return <AppShell area="admin" navItems={[...adminNav]}>{children}</AppShell>;
 }

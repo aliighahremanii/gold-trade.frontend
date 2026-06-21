@@ -1,5 +1,5 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { OrdersShellFlow } from "@/modules/trading/flows/orders-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Orders" module="trading" />;
+  return <OrdersShellFlow />;
 }

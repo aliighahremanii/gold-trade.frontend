@@ -1,5 +1,5 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { CustomerDashboardShellFlow } from "@/modules/wallet/flows/customer-dashboard-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Dashboard" module="wallet" />;
+  return <CustomerDashboardShellFlow />;
 }

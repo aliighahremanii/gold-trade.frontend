@@ -1,5 +1,5 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { WalletShellFlow } from "@/modules/wallet/flows/wallet-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Wallet" module="wallet" />;
+  return <WalletShellFlow />;
 }

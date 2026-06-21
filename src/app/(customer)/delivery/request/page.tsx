@@ -1,5 +1,5 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { RequestDeliveryShellFlow } from "@/modules/delivery/flows/request-delivery-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Request delivery" module="delivery" />;
+  return <RequestDeliveryShellFlow />;
 }

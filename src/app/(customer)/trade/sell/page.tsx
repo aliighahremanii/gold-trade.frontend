@@ -1,5 +1,5 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { SellGoldShellFlow } from "@/modules/trading/flows/sell-gold-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Sell gold" module="trading" />;
+  return <SellGoldShellFlow />;
 }

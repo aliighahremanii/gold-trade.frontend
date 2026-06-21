@@ -4,7 +4,8 @@ import SignInPage from "@/app/(auth)/sign-in/page";
 import DashboardPage from "@/app/(customer)/dashboard/page";
 import BuyGoldPage from "@/app/(customer)/trade/buy/page";
 import { SignInScaffoldFlow } from "@/modules/identity/flows/sign-in-scaffold-flow";
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { BuyGoldShellFlow } from "@/modules/trading/flows/buy-gold-shell-flow";
+import { CustomerDashboardShellFlow } from "@/modules/wallet/flows/customer-dashboard-shell-flow";
 import { siteConfig } from "@/shared/config/site";
 
 describe("scaffold", () => {
@@ -12,7 +13,7 @@ describe("scaffold", () => {
     expect(siteConfig.name).toBe("Gold Trade");
   });
 
-  it("keeps route pages as thin scaffold composition", async () => {
+  it("keeps route pages as thin module flow composition", async () => {
     const signInElement = await SignInPage({
       searchParams: Promise.resolve({ next: "/dashboard", reason: "auth_required" }),
     });
@@ -25,10 +26,7 @@ describe("scaffold", () => {
       reason: "auth_required",
     });
 
-    expect(dashboardElement.type).toBe(ScaffoldPage);
-    expect(dashboardElement.props).toMatchObject({ title: "Dashboard", module: "wallet" });
-
-    expect(buyGoldElement.type).toBe(ScaffoldPage);
-    expect(buyGoldElement.props).toMatchObject({ title: "Buy gold", module: "trading" });
+    expect(dashboardElement.type).toBe(CustomerDashboardShellFlow);
+    expect(buyGoldElement.type).toBe(BuyGoldShellFlow);
   });
 });

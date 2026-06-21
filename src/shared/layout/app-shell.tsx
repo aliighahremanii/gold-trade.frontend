@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { AppShellNav } from "@/shared/layout/app-shell-nav";
 import { siteConfig } from "@/shared/config/site";
 
 type NavItem = {
@@ -27,20 +28,7 @@ export function AppShell({ children, navItems, area }: AppShellProps) {
               {siteConfig.name}
             </Link>
           </div>
-          <nav aria-label={`${area} navigation`}>
-            <ul className="flex flex-wrap gap-3 text-sm">
-              {navItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-zinc-700 underline-offset-4 hover:underline dark:text-zinc-300"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <AppShellNav area={area} navItems={navItems} />
         </div>
       </header>
       <main className="flex-1">{children}</main>

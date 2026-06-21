@@ -1,5 +1,5 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { WithdrawIrrShellFlow } from "@/modules/payments/flows/withdraw-irr-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Withdraw IRR" module="payments" />;
+  return <WithdrawIrrShellFlow />;
 }

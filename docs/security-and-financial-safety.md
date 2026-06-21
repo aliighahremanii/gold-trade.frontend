@@ -9,6 +9,7 @@ Preferred:
 - HttpOnly secure cookies or BFF/session pattern where possible
 - server-side validation for protected route groups
 - explicit admin route protection
+- preserve the original destination when redirecting users to sign-in
 
 Avoid:
 

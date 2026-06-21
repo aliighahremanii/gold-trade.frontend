@@ -1,5 +1,11 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { DeliveryDetailShellFlow } from "@/modules/delivery/flows/delivery-detail-shell-flow";
 
-export default function Page() {
-  return <ScaffoldPage title="Delivery details" module="delivery" />;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  return <DeliveryDetailShellFlow deliveryId={id} />;
 }
