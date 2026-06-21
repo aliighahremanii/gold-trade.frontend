@@ -1,0 +1,1050 @@
+{
+  "components": {
+    "schemas": {
+      "AssignMismatchRequest": {
+        "properties": {
+          "assigned_to": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "assigned_to"
+        ],
+        "type": "object"
+      },
+      "MismatchDetail": {
+        "properties": {
+          "actual_value": {
+            "type": "string"
+          },
+          "assigned_to": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "expected_value": {
+            "type": "string"
+          },
+          "external_ref_id": {
+            "type": "string"
+          },
+          "external_ref_type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "internal_ref_id": {
+            "type": "string"
+          },
+          "internal_ref_type": {
+            "type": "string"
+          },
+          "market_symbol": {
+            "type": "string"
+          },
+          "mismatch_type": {
+            "type": "string"
+          },
+          "provider_code": {
+            "type": "string"
+          },
+          "provider_symbol": {
+            "type": "string"
+          },
+          "resolution_notes": {
+            "type": "string"
+          },
+          "resolved_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "run_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ProblemResponse": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ProblemFieldError"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ReconcileDeliveryRequest": {
+        "properties": {
+          "correlation_id": {
+            "type": "string"
+          },
+          "external_amount": {
+            "example": 0,
+            "format": "int64",
+            "type": "integer"
+          },
+          "external_custody_reference": {
+            "type": "string"
+          },
+          "internal_amount": {
+            "example": 0,
+            "format": "int64",
+            "type": "integer"
+          },
+          "internal_asset_code": {
+            "type": "string"
+          },
+          "internal_handover_reference": {
+            "type": "string"
+          },
+          "internal_status": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "correlation_id",
+          "request_id",
+          "user_id",
+          "internal_asset_code",
+          "internal_amount",
+          "internal_status",
+          "external_custody_reference",
+          "external_amount"
+        ],
+        "type": "object"
+      },
+      "ReconcilePaymentRequest": {
+        "properties": {
+          "correlation_id": {
+            "type": "string"
+          },
+          "external_amount": {
+            "example": 0,
+            "format": "int64",
+            "type": "integer"
+          },
+          "external_bank_reference": {
+            "type": "string"
+          },
+          "external_reconciliation_reference": {
+            "type": "string"
+          },
+          "internal_amount": {
+            "example": 0,
+            "format": "int64",
+            "type": "integer"
+          },
+          "internal_bank_reference": {
+            "type": "string"
+          },
+          "internal_id": {
+            "type": "string"
+          },
+          "internal_reconciliation_reference": {
+            "type": "string"
+          },
+          "internal_status": {
+            "type": "string"
+          },
+          "payment_type": {
+            "example": "deposit",
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "correlation_id",
+          "payment_type",
+          "internal_id",
+          "user_id",
+          "internal_amount",
+          "internal_status",
+          "external_bank_reference",
+          "external_amount"
+        ],
+        "type": "object"
+      },
+      "ReconcileProviderExecutionRequest": {
+        "properties": {
+          "correlation_id": {
+            "type": "string"
+          },
+          "execution_id": {
+            "type": "string"
+          },
+          "internal_base_amount": {
+            "example": 0,
+            "format": "int64",
+            "type": "integer"
+          },
+          "internal_market_symbol": {
+            "type": "string"
+          },
+          "internal_order_id": {
+            "type": "string"
+          },
+          "internal_side": {
+            "type": "string"
+          },
+          "provider_code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "correlation_id",
+          "execution_id",
+          "provider_code",
+          "internal_order_id",
+          "internal_market_symbol",
+          "internal_side",
+          "internal_base_amount"
+        ],
+        "type": "object"
+      },
+      "ReconcileWalletLedgerRequest": {
+        "properties": {
+          "asset_code": {
+            "type": "string"
+          },
+          "correlation_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "correlation_id",
+          "user_id",
+          "asset_code"
+        ],
+        "type": "object"
+      },
+      "ResolveMismatchRequest": {
+        "properties": {
+          "dismiss": {
+            "type": "boolean"
+          },
+          "resolution_notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "resolution_notes"
+        ],
+        "type": "object"
+      },
+      "RunDetail": {
+        "properties": {
+          "completed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "correlation_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "matched_count": {
+            "type": "integer"
+          },
+          "mismatch_count": {
+            "type": "integer"
+          },
+          "run_type": {
+            "type": "string"
+          },
+          "scope_asset_code": {
+            "type": "string"
+          },
+          "scope_external_ref": {
+            "type": "string"
+          },
+          "scope_internal_ref_id": {
+            "type": "string"
+          },
+          "scope_internal_ref_type": {
+            "type": "string"
+          },
+          "scope_market_symbol": {
+            "type": "string"
+          },
+          "scope_user_id": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Compares internal records with external provider, bank, custody, and ledger views. Detects mismatches and records exceptions without mutating financial state.",
+    "title": "Reconciliation API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "example": "pong",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Service is healthy."
+          }
+        },
+        "summary": "Service health check",
+        "tags": [
+          "Operations"
+        ]
+      }
+    },
+    "/reconciliation/mismatches": {
+      "get": {
+        "operationId": "listMismatches",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MismatchDetail"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Reconciliation mismatches."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List reconciliation mismatches.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/mismatches/{id}": {
+      "get": {
+        "operationId": "getMismatch",
+        "parameters": [
+          {
+            "description": "Reconciliation mismatch identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MismatchDetail"
+                }
+              }
+            },
+            "description": "Reconciliation mismatch detail."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Reconciliation mismatch not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get reconciliation mismatch by identifier.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/mismatches/{id}/assign": {
+      "post": {
+        "operationId": "assignMismatch",
+        "parameters": [
+          {
+            "description": "Reconciliation mismatch identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignMismatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MismatchDetail"
+                }
+              }
+            },
+            "description": "Mismatch assigned."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Reconciliation mismatch not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Assign a mismatch exception to an operator for review.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/mismatches/{id}/resolve": {
+      "post": {
+        "operationId": "resolveMismatch",
+        "parameters": [
+          {
+            "description": "Reconciliation mismatch identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveMismatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MismatchDetail"
+                }
+              }
+            },
+            "description": "Mismatch resolved."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Reconciliation mismatch not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Resolve or dismiss a mismatch without mutating financial state.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/runs": {
+      "get": {
+        "operationId": "listRuns",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RunDetail"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Reconciliation runs."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List reconciliation runs.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/runs/delivery": {
+      "post": {
+        "operationId": "reconcileDelivery",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconcileDeliveryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDetail"
+                }
+              }
+            },
+            "description": "Reconciliation run completed."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Compare completed delivery requests with custody-out records.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/runs/payment": {
+      "post": {
+        "operationId": "reconcilePayment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconcilePaymentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDetail"
+                }
+              }
+            },
+            "description": "Reconciliation run completed."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Compare internal payment records with bank statement references.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/runs/provider-execution": {
+      "post": {
+        "operationId": "reconcileProviderExecution",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconcileProviderExecutionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDetail"
+                }
+              }
+            },
+            "description": "Reconciliation run completed."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Compare internal trade execution with provider liquidity execution and market mapping.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/runs/wallet-ledger": {
+      "post": {
+        "operationId": "reconcileWalletLedger",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconcileWalletLedgerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDetail"
+                }
+              }
+            },
+            "description": "Reconciliation run completed."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Compare wallet balances with ledger balances for a user and asset.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/reconciliation/runs/{id}": {
+      "get": {
+        "operationId": "getRun",
+        "parameters": [
+          {
+            "description": "Reconciliation run identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDetail"
+                }
+              }
+            },
+            "description": "Reconciliation run detail."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Reconciliation run not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get reconciliation run by identifier.",
+        "tags": [
+          "Service"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/reconciliation/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Service"
+    }
+  ]
+}

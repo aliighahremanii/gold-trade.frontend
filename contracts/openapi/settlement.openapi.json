@@ -1,0 +1,894 @@
+{
+  "components": {
+    "schemas": {
+      "ProblemFieldError": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ProblemResponse": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ProblemFieldError"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "RequestDeliverySettlementRequest": {
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "asset_code": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "source_module": {
+            "type": "string"
+          },
+          "source_operation_id": {
+            "type": "string"
+          },
+          "source_operation_type": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "wallet_lock_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "idempotency_key",
+          "source_module",
+          "source_operation_type",
+          "source_operation_id",
+          "user_id",
+          "asset_code",
+          "amount",
+          "wallet_lock_id"
+        ],
+        "type": "object"
+      },
+      "RequestDepositSettlementRequest": {
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "asset_code": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "source_module": {
+            "type": "string"
+          },
+          "source_operation_id": {
+            "type": "string"
+          },
+          "source_operation_type": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "idempotency_key",
+          "source_module",
+          "source_operation_type",
+          "source_operation_id",
+          "user_id",
+          "asset_code",
+          "amount"
+        ],
+        "type": "object"
+      },
+      "RequestLockReleaseSettlementRequest": {
+        "properties": {
+          "idempotency_key": {
+            "type": "string"
+          },
+          "source_module": {
+            "type": "string"
+          },
+          "source_operation_id": {
+            "type": "string"
+          },
+          "source_operation_type": {
+            "type": "string"
+          },
+          "wallet_lock_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "idempotency_key",
+          "source_module",
+          "source_operation_type",
+          "source_operation_id",
+          "wallet_lock_id"
+        ],
+        "type": "object"
+      },
+      "RequestTradeSettlementRequest": {
+        "properties": {
+          "base_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "base_asset_code": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "market_symbol": {
+            "type": "string"
+          },
+          "quote_asset_code": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "source_module": {
+            "type": "string"
+          },
+          "source_operation_id": {
+            "type": "string"
+          },
+          "source_operation_type": {
+            "type": "string"
+          },
+          "total_quote_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "wallet_lock_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "idempotency_key",
+          "source_module",
+          "source_operation_type",
+          "source_operation_id",
+          "user_id",
+          "market_symbol",
+          "side",
+          "base_asset_code",
+          "quote_asset_code",
+          "base_amount",
+          "total_quote_amount",
+          "wallet_lock_id"
+        ],
+        "type": "object"
+      },
+      "RequestWithdrawalSettlementRequest": {
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "asset_code": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "source_module": {
+            "type": "string"
+          },
+          "source_operation_id": {
+            "type": "string"
+          },
+          "source_operation_type": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "wallet_lock_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "idempotency_key",
+          "source_module",
+          "source_operation_type",
+          "source_operation_id",
+          "user_id",
+          "asset_code",
+          "amount",
+          "wallet_lock_id"
+        ],
+        "type": "object"
+      },
+      "SettlementDetail": {
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "asset_code": {
+            "type": "string"
+          },
+          "completed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "counter_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "counter_asset_code": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "failure_reason": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "ledger_transaction_id": {
+            "type": "string"
+          },
+          "market_symbol": {
+            "type": "string"
+          },
+          "retry_count": {
+            "type": "integer"
+          },
+          "settlement_type": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "source_module": {
+            "type": "string"
+          },
+          "source_operation_id": {
+            "type": "string"
+          },
+          "source_operation_type": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "wallet_lock_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Financial finalization for trades, deposits, withdrawals, deliveries, and lock releases.",
+    "title": "Settlement API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "example": "pong",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Service is healthy."
+          }
+        },
+        "summary": "Service health check",
+        "tags": [
+          "Operations"
+        ]
+      }
+    },
+    "/settlement/deliveries": {
+      "post": {
+        "operationId": "requestDeliverySettlement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDeliverySettlementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementDetail"
+                }
+              }
+            },
+            "description": "Settlement created or returned."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Finalize physical delivery custody-out.",
+        "tags": [
+          "Settlement"
+        ]
+      }
+    },
+    "/settlement/deposits": {
+      "post": {
+        "operationId": "requestDepositSettlement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDepositSettlementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementDetail"
+                }
+              }
+            },
+            "description": "Settlement created or returned."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Credit a confirmed deposit.",
+        "tags": [
+          "Settlement"
+        ]
+      }
+    },
+    "/settlement/lock-releases": {
+      "post": {
+        "operationId": "requestLockReleaseSettlement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestLockReleaseSettlementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementDetail"
+                }
+              }
+            },
+            "description": "Settlement created or returned."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Release a wallet lock after cancellation or rejection.",
+        "tags": [
+          "Settlement"
+        ]
+      }
+    },
+    "/settlement/trades": {
+      "post": {
+        "operationId": "requestTradeSettlement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestTradeSettlementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementDetail"
+                }
+              }
+            },
+            "description": "Settlement created or returned."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Finalize an executed trade on a platform market.",
+        "tags": [
+          "Settlement"
+        ]
+      }
+    },
+    "/settlement/withdrawals": {
+      "post": {
+        "operationId": "requestWithdrawalSettlement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestWithdrawalSettlementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementDetail"
+                }
+              }
+            },
+            "description": "Settlement created or returned."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Finalize a completed withdrawal.",
+        "tags": [
+          "Settlement"
+        ]
+      }
+    },
+    "/settlement/{id}": {
+      "get": {
+        "operationId": "getSettlement",
+        "parameters": [
+          {
+            "description": "Settlement identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementDetail"
+                }
+              }
+            },
+            "description": "Settlement detail."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Settlement not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get settlement by identifier.",
+        "tags": [
+          "Settlement"
+        ]
+      }
+    },
+    "/settlement/{id}/retry": {
+      "post": {
+        "operationId": "retrySettlement",
+        "parameters": [
+          {
+            "description": "Settlement identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementDetail"
+                }
+              }
+            },
+            "description": "Settlement retried."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Settlement not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Settlement is not retryable."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Retry a failed settlement.",
+        "tags": [
+          "Settlement"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/settlement/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Settlement"
+    }
+  ]
+}

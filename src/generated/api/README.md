@@ -1,7 +1,16 @@
 # Generated API client
 
-OpenAPI-generated types and client code will be added in the API contract freeze phase.
+OpenAPI-generated types and manifest metadata live in this directory.
 
-`index.ts` is the stable import entrypoint for generated exports once backend OpenAPI is available.
+- Entrypoint: `index.ts`
+- Per-module schemas: `{module}/schema.ts`
+- Contract snapshots: `contracts/openapi/{module}.openapi.json`
+
+Regenerate with:
+
+```bash
+pnpm sync:openapi
+pnpm generate:api
+```
 
 Do not hand-write DTOs that duplicate generated types.

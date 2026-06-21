@@ -8,13 +8,22 @@ Each backend module exposes or should expose OpenAPI for its route surface. The 
 
 ## Recommended generated client setup
 
-Possible tools:
+Chosen stack:
 
-- `openapi-typescript` for type generation
-- `openapi-fetch` or a typed fetch wrapper
-- Orval if the team wants generated TanStack Query hooks
+- `openapi-typescript` for per-module schema generation from committed OpenAPI snapshots
+- `openapi-fetch` for typed HTTP clients in module wrappers
+- committed snapshots in `contracts/openapi` refreshed via `pnpm sync:openapi`
+- generated output in `src/generated/api/{module}/schema.ts`
 
-Pick one and document it. Do not mix multiple client-generation styles without a reason.
+Commands:
+
+```bash
+pnpm sync:openapi
+pnpm generate:api
+pnpm check:api-drift
+```
+
+Do not mix additional client-generation styles without a documented reason.
 
 ## Contract freeze before UI implementation
 

@@ -1,0 +1,308 @@
+{
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Canonical asset and market catalog: definitions, units, capabilities, trading pairs, and quantity normalization.",
+    "title": "Asset API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/admin/assets": {
+      "post": {
+        "operationId": "defineAsset",
+        "responses": {
+          "201": {
+            "description": "Draft asset created"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Define a new draft asset",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/assets/{code}/activate": {
+      "post": {
+        "operationId": "activateAsset",
+        "responses": {
+          "200": {
+            "description": "Asset activated"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Asset not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Activate a draft asset and publish an integration event",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/assets/{code}/suspend": {
+      "post": {
+        "operationId": "suspendAsset",
+        "responses": {
+          "200": {
+            "description": "Asset suspended"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Asset not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Suspend an active asset",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/markets": {
+      "post": {
+        "operationId": "defineMarket",
+        "responses": {
+          "201": {
+            "description": "Draft market created"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Define a new draft market; symbol is derived from base and quote",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/markets/{symbol}/activate": {
+      "post": {
+        "operationId": "activateMarket",
+        "responses": {
+          "200": {
+            "description": "Market activated"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Activate a draft market",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/markets/{symbol}/buy-side": {
+      "post": {
+        "operationId": "setMarketBuySide",
+        "responses": {
+          "200": {
+            "description": "Market buy side updated"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Enable or disable market buy side",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/markets/{symbol}/deactivate": {
+      "post": {
+        "operationId": "deactivateMarket",
+        "responses": {
+          "200": {
+            "description": "Market deactivated"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Deactivate an active market",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/markets/{symbol}/sell-side": {
+      "post": {
+        "operationId": "setMarketSellSide",
+        "responses": {
+          "200": {
+            "description": "Market sell side updated"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Enable or disable market sell side",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/assets": {
+      "get": {
+        "operationId": "listActiveAssets",
+        "responses": {
+          "200": {
+            "description": "Active asset summaries"
+          }
+        },
+        "summary": "List active assets",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
+    "/assets/{code}": {
+      "get": {
+        "operationId": "getAssetByCode",
+        "responses": {
+          "200": {
+            "description": "Asset detail"
+          },
+          "404": {
+            "description": "Asset not found"
+          }
+        },
+        "summary": "Get asset definition by code",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
+    "/assets/{code}/normalize-quantity": {
+      "post": {
+        "operationId": "normalizeQuantity",
+        "responses": {
+          "200": {
+            "description": "Normalized quantity"
+          }
+        },
+        "summary": "Convert a display-unit amount to base units",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "example": "pong",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Service is healthy."
+          }
+        },
+        "summary": "Service health check",
+        "tags": [
+          "Operations"
+        ]
+      }
+    },
+    "/markets": {
+      "get": {
+        "operationId": "listActiveMarkets",
+        "responses": {
+          "200": {
+            "description": "Active market summaries"
+          }
+        },
+        "summary": "List active markets",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
+    "/markets/{symbol}": {
+      "get": {
+        "operationId": "getMarketBySymbol",
+        "responses": {
+          "200": {
+            "description": "Market detail"
+          },
+          "404": {
+            "description": "Market not found"
+          }
+        },
+        "summary": "Get market definition by symbol",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/asset/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Catalog"
+    },
+    {
+      "name": "Admin"
+    }
+  ]
+}
