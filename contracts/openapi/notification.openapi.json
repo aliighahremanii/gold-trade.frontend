@@ -1,0 +1,602 @@
+{
+  "components": {
+    "schemas": {
+      "CreateNotificationRequest": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "correlationId": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "maxAttempts": {
+            "type": "integer"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "recipient": {
+            "type": "string"
+          },
+          "scheduledAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "sendAfter": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "sourceModule": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "templateData": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "templateKey": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventId",
+          "correlationId",
+          "idempotencyKey",
+          "sourceModule",
+          "channel",
+          "priority",
+          "recipient",
+          "subject",
+          "title",
+          "body",
+          "templateKey",
+          "templateData",
+          "metadata",
+          "maxAttempts"
+        ],
+        "type": "object"
+      },
+      "EnqueueResponse": {
+        "properties": {
+          "duplicate": {
+            "type": "boolean"
+          },
+          "notificationId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "notificationId",
+          "status",
+          "duplicate"
+        ],
+        "type": "object"
+      },
+      "NotificationResponse": {
+        "properties": {
+          "attemptCount": {
+            "type": "integer"
+          },
+          "availableAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "cancelledAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "correlationId": {
+            "type": "string"
+          },
+          "failedAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "failureCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "failureReason": {
+            "nullable": true,
+            "type": "string"
+          },
+          "maxAttempts": {
+            "type": "integer"
+          },
+          "notificationId": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "providerMessageId": {
+            "nullable": true,
+            "type": "string"
+          },
+          "providerName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "recipient": {
+            "type": "string"
+          },
+          "scheduledAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "sentAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "sourceModule": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "notificationId",
+          "correlationID",
+          "sourceModule",
+          "channel",
+          "priority",
+          "status",
+          "recipient",
+          "subject",
+          "title",
+          "body",
+          "attemptCount",
+          "maxAttempts"
+        ],
+        "type": "object"
+      },
+      "ProblemFieldError": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ProblemResponse": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ProblemFieldError"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "StatusResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "HTTP API for notification enqueue, lookup, cancel, and retry operations.",
+    "title": "Notification API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "example": "pong",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Service is healthy."
+          }
+        },
+        "summary": "Service health check",
+        "tags": [
+          "Operations"
+        ]
+      }
+    },
+    "/notifications": {
+      "post": {
+        "operationId": "enqueueNotification",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNotificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnqueueResponse"
+                }
+              }
+            },
+            "description": "Notification accepted."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Too many requests."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Enqueue a notification for delivery.",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/notifications/{id}": {
+      "get": {
+        "operationId": "getNotificationByID",
+        "parameters": [
+          {
+            "description": "Notification identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResponse"
+                }
+              }
+            },
+            "description": "Notification details."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Notification not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get a notification by identifier.",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/notifications/{id}/cancel": {
+      "post": {
+        "operationId": "cancelNotification",
+        "parameters": [
+          {
+            "description": "Notification identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            },
+            "description": "Notification status updated."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Notification not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Notification cannot be cancelled in its current state."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Cancel a queued notification.",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/notifications/{id}/retry": {
+      "post": {
+        "operationId": "retryNotification",
+        "parameters": [
+          {
+            "description": "Notification identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            },
+            "description": "Notification status updated."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Notification not found."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Notification cannot be retried in its current state."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Retry a failed notification.",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/notification/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Notifications"
+    }
+  ]
+}

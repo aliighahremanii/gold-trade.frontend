@@ -7,7 +7,9 @@ Do not invent endpoints in this file before the backend contract exists.
 
 ## Generation workflow
 
+- Staging OpenAPI source: `https://saba.gold/api/{module}/v1/openapi.json`
 - Contract snapshots: `contracts/openapi/{module}.openapi.json`
+- Temporary snapshot compatibility allowlist: `contracts/openapi/problem-schema-compatibility.json`
 - Generated client entrypoint: `src/generated/api/index.ts`
 - Per-module generated types: `src/generated/api/{module}/schema.ts`
 - Frontend wrappers: `src/modules/{module}/api`
@@ -18,9 +20,9 @@ Do not invent endpoints in this file before the backend contract exists.
 Refresh commands:
 
 ```bash
-pnpm sync:openapi
-pnpm generate:api
-pnpm check:api-drift
+bun run sync:openapi
+bun run generate:api
+bun run check:api-drift
 ```
 
 ## Contract freeze status
@@ -41,6 +43,8 @@ pnpm check:api-drift
 | compliance | Manual review and limits | `contracts/openapi/compliance.openapi.json` | frozen | Review-case states must not be collapsed in UI. |
 | reconciliation | Reconciliation dashboards | `contracts/openapi/reconciliation.openapi.json` | frozen | Mismatch and unknown-state visibility is required. |
 | ledger | Admin ledger visibility | `contracts/openapi/ledger.openapi.json` | frozen | Admin-only surface; not part of customer MVP navigation yet. |
+| notification | Notification delivery status | `contracts/openapi/notification.openapi.json` | frozen | Contract synced from staging; UI module not scaffolded yet. |
+| liquidity | Liquidity execution visibility | `contracts/openapi/liquidity.openapi.json` | frozen | Contract synced from staging; admin visibility only for MVP. |
 
 ## MVP endpoint inventory
 
@@ -150,8 +154,10 @@ Use this template for each new endpoint during implementation.
 
 ## Open assumptions
 
+- Staging API base URL is `https://saba.gold`; frontend development and contract sync use staging by default.
 - Default backend path prefix is `/api/{module}/v1`.
 - Browser auth transport for MVP still needs explicit frontend implementation; OpenAPI documents bearer auth schemes.
 - Idempotency header names must be confirmed per mutation when wrappers are implemented.
 - `asset`, `settlement`, `compliance`, and `ledger` contracts are frozen for upcoming flows even when current scaffold pages do not call them yet.
 - Some backend module OpenAPI exports reference shared `ProblemResponse` schemas without embedding `ProblemFieldError` or `ProblemResponse` component definitions. `scripts/patch-openapi-document.mjs` injects the shared building-block shape at generation time until backend exports are fully self-contained.
+- Every temporary schema repair must be declared in `contracts/openapi/problem-schema-compatibility.json`; undocumented or stale compatibility patches fail generation.

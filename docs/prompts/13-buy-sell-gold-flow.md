@@ -44,10 +44,10 @@ Implement customer buy and sell gold workflows using Quote, Trading, Wallet, and
 
 ## Validation
 
-- pnpm lint
-- pnpm typecheck
-- pnpm test
-- pnpm build
+- bun run lint
+- bun run typecheck
+- bun run test
+- bun run build
 
 ## Final response
 

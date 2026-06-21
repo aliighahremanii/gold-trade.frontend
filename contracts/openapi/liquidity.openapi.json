@@ -1,0 +1,1065 @@
+{
+  "components": {
+    "schemas": {
+      "ExecutionDetail": {
+        "properties": {
+          "base_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "base_unit_code": {
+            "type": "string"
+          },
+          "completed_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "correlation_id": {
+            "type": "string"
+          },
+          "failure_reason": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "market_symbol": {
+            "type": "string"
+          },
+          "provider_code": {
+            "type": "string"
+          },
+          "provider_reference": {
+            "type": "string"
+          },
+          "provider_symbol": {
+            "type": "string"
+          },
+          "quote_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "correlation_id",
+          "idempotency_key",
+          "provider_code",
+          "market_symbol",
+          "provider_symbol",
+          "side",
+          "status",
+          "base_amount",
+          "base_unit_code",
+          "requested_at"
+        ],
+        "type": "object"
+      },
+      "ExecutionEligibility": {
+        "properties": {
+          "eligible": {
+            "type": "boolean"
+          },
+          "market_symbol": {
+            "type": "string"
+          },
+          "provider_code": {
+            "type": "string"
+          },
+          "provider_symbol": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "eligible"
+        ],
+        "type": "object"
+      },
+      "MarketExecutionStatusDetail": {
+        "properties": {
+          "market_symbol": {
+            "type": "string"
+          },
+          "provider_code": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider_code",
+          "market_symbol",
+          "status",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "MarketMappingDetail": {
+        "properties": {
+          "base_unit_code": {
+            "type": "string"
+          },
+          "buy_enabled": {
+            "type": "boolean"
+          },
+          "market_symbol": {
+            "type": "string"
+          },
+          "max_base_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "min_base_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "provider_code": {
+            "type": "string"
+          },
+          "provider_symbol": {
+            "type": "string"
+          },
+          "sell_enabled": {
+            "type": "boolean"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider_code",
+          "market_symbol",
+          "provider_symbol",
+          "buy_enabled",
+          "sell_enabled",
+          "base_unit_code",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "ProviderDetail": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "venue_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "venue_type",
+          "status",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "RequestExecutionRequest": {
+        "properties": {
+          "base_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "base_unit_code": {
+            "type": "string"
+          },
+          "correlation_id": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "market_symbol": {
+            "type": "string"
+          },
+          "provider_code": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "correlation_id",
+          "idempotency_key",
+          "market_symbol",
+          "side",
+          "base_amount"
+        ],
+        "type": "object"
+      },
+      "SetMarketExecutionStatusRequest": {
+        "properties": {
+          "actor_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "actor_id"
+        ],
+        "type": "object"
+      },
+      "SetProviderStatusRequest": {
+        "properties": {
+          "actor_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "actor_id"
+        ],
+        "type": "object"
+      },
+      "UpsertMarketMappingRequest": {
+        "properties": {
+          "base_unit_code": {
+            "type": "string"
+          },
+          "buy_enabled": {
+            "type": "boolean"
+          },
+          "max_base_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "min_base_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "provider_symbol": {
+            "type": "string"
+          },
+          "sell_enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "provider_symbol",
+          "buy_enabled",
+          "sell_enabled",
+          "base_unit_code"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Liquidity provider abstraction, provider market mappings, execution attempts, and provider availability for existing platform markets.",
+    "title": "Liquidity API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "example": "pong",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Service is healthy."
+          }
+        },
+        "summary": "Service health check",
+        "tags": [
+          "Operations"
+        ]
+      }
+    },
+    "/liquidity/admin/markets/{symbol}/execution-status": {
+      "put": {
+        "operationId": "setMarketExecutionStatus",
+        "parameters": [
+          {
+            "description": "Platform market symbol.",
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Liquidity provider code.",
+            "in": "query",
+            "name": "provider_code",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetMarketExecutionStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketExecutionStatusDetail"
+                }
+              }
+            },
+            "description": "Market execution status updated."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Market not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Set provider market execution status.",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/liquidity/admin/markets/{symbol}/mapping": {
+      "put": {
+        "operationId": "upsertMarketMapping",
+        "parameters": [
+          {
+            "description": "Platform market symbol.",
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Liquidity provider code.",
+            "in": "query",
+            "name": "provider_code",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertMarketMappingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketMappingDetail"
+                }
+              }
+            },
+            "description": "Market mapping saved."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Market not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create or update provider market mapping.",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/liquidity/admin/providers/{code}/status": {
+      "put": {
+        "operationId": "setProviderStatus",
+        "parameters": [
+          {
+            "description": "Liquidity provider code.",
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetProviderStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderDetail"
+                }
+              }
+            },
+            "description": "Provider status updated."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Provider not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Set global provider availability status.",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/liquidity/executions": {
+      "post": {
+        "operationId": "requestExecution",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestExecutionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionDetail"
+                }
+              }
+            },
+            "description": "Existing or completed execution attempt."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionDetail"
+                }
+              }
+            },
+            "description": "Execution attempt created."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Invalid request body."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Market, provider, or mapping not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Request provider execution for an existing platform market.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/liquidity/executions/{id}": {
+      "get": {
+        "operationId": "getExecution",
+        "parameters": [
+          {
+            "description": "Execution attempt identifier.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionDetail"
+                }
+              }
+            },
+            "description": "Execution attempt."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Execution attempt not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get an execution attempt by identifier.",
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/liquidity/markets/{symbol}/execution-eligibility": {
+      "get": {
+        "operationId": "checkExecutionEligibility",
+        "parameters": [
+          {
+            "description": "Platform market symbol.",
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Liquidity provider code.",
+            "in": "query",
+            "name": "provider_code",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Execution side.",
+            "in": "query",
+            "name": "side",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Base amount to validate.",
+            "in": "query",
+            "name": "base_amount",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionEligibility"
+                }
+              }
+            },
+            "description": "Execution eligibility."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Market not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Validation error."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "summary": "Check whether automatic provider execution is currently allowed.",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
+    "/liquidity/markets/{symbol}/execution-status": {
+      "get": {
+        "operationId": "getMarketExecutionStatus",
+        "parameters": [
+          {
+            "description": "Platform market symbol.",
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Liquidity provider code.",
+            "in": "query",
+            "name": "provider_code",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketExecutionStatusDetail"
+                }
+              }
+            },
+            "description": "Market execution status."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "summary": "Get provider market execution status.",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
+    "/liquidity/markets/{symbol}/mapping": {
+      "get": {
+        "operationId": "getMarketMapping",
+        "parameters": [
+          {
+            "description": "Platform market symbol.",
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Liquidity provider code.",
+            "in": "query",
+            "name": "provider_code",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketMappingDetail"
+                }
+              }
+            },
+            "description": "Market mapping."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Mapping not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "summary": "Get provider symbol mapping for a platform market.",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
+    "/liquidity/providers": {
+      "get": {
+        "operationId": "listProviders",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderDetail"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Providers."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemResponse"
+                }
+              }
+            },
+            "description": "Unexpected error."
+          }
+        },
+        "summary": "List configured liquidity providers.",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/liquidity/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Catalog"
+    },
+    {
+      "name": "Service"
+    },
+    {
+      "name": "Admin"
+    }
+  ]
+}

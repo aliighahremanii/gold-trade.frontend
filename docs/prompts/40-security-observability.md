@@ -41,10 +41,10 @@ Harden frontend security, logging, telemetry, and operational visibility.
 
 ## Validation
 
-- pnpm lint
-- pnpm typecheck
-- pnpm test
-- pnpm build
+- bun run lint
+- bun run typecheck
+- bun run test
+- bun run build
 
 ## Final response
 

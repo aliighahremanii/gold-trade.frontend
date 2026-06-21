@@ -41,10 +41,10 @@ Implement the customer route shell and navigation for MVP workflows.
 
 ## Validation
 
-- pnpm lint
-- pnpm typecheck
-- pnpm test
-- pnpm build
+- bun run lint
+- bun run typecheck
+- bun run test
+- bun run build
 
 ## Final response
 

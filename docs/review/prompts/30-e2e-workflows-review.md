@@ -29,16 +29,16 @@ Review Playwright coverage, determinism, test data strategy, CI integration, and
 Run or request results for:
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
+bun run lint
+bun run typecheck
+bun run test
+bun run build
 ```
 
 If E2E was in scope:
 
 ```bash
-pnpm test:e2e
+bun run test:e2e
 ```
 
 ## Output format

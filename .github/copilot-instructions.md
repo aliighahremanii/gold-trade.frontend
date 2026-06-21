@@ -168,14 +168,14 @@ Update the nearest docs when changing:
 
 ## Command Policy
 
-Use the package manager chosen by the repository. If uncertain, prefer `pnpm` for new Next.js projects.
+This repository uses Bun.
 
 Recommended validation commands:
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm test:e2e
-pnpm build
+bun run lint
+bun run typecheck
+bun run test
+bun run test:e2e
+bun run build
 ```

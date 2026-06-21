@@ -12,16 +12,27 @@ Chosen stack:
 
 - `openapi-typescript` for per-module schema generation from committed OpenAPI snapshots
 - `openapi-fetch` for typed HTTP clients in module wrappers
-- committed snapshots in `contracts/openapi` refreshed via `pnpm sync:openapi`
+- `@tanstack/react-query` for module-owned server-state hooks over generated clients
+- committed snapshots in `contracts/openapi` refreshed from staging via `bun run sync:openapi`
 - generated output in `src/generated/api/{module}/schema.ts`
+- temporary compatibility allowlist in `contracts/openapi/problem-schema-compatibility.json` for backend snapshots that still omit shared problem schemas
+
+Staging OpenAPI source:
+
+```text
+https://saba.gold/api/{module}/v1/openapi.json
+```
 
 Commands:
 
 ```bash
-pnpm sync:openapi
-pnpm generate:api
-pnpm check:api-drift
+bun run sync:openapi
+bun run generate:api
+bun run check:api-drift
 ```
+
+`bun run generate:api` fails for undocumented schema gaps and for stale allowlist entries after backend exports are fixed.
+The generated manifest records any temporary compatibility patches so CI and tests can keep them explicit.
 
 Do not mix additional client-generation styles without a documented reason.
 

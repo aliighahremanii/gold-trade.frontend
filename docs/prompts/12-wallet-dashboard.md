@@ -41,10 +41,10 @@ Implement wallet and portfolio visibility for IRR and XAU.
 
 ## Validation
 
-- pnpm lint
-- pnpm typecheck
-- pnpm test
-- pnpm build
+- bun run lint
+- bun run typecheck
+- bun run test
+- bun run build
 
 ## Final response
 

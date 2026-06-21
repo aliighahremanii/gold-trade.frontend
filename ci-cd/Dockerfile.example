@@ -1,16 +1,15 @@
 # Example self-hosted Next.js Dockerfile
-# Adjust package manager and output mode to your actual project.
 
-FROM node:22-alpine AS deps
+FROM oven/bun:1 AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && pnpm install --frozen-lockfile
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
-FROM node:22-alpine AS builder
+FROM oven/bun:1 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN corepack enable && pnpm generate:api && pnpm build
+RUN bun run generate:api && bun run build
 
 FROM node:22-alpine AS runner
 WORKDIR /app

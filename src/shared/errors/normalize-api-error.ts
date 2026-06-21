@@ -2,7 +2,7 @@ import {
   KNOWN_PROBLEM_CODES,
   type ApiErrorKind,
   type NormalizedApiError,
-  type ProblemFieldError,
+  type NormalizedProblemFieldError,
   type ProblemResponse,
 } from "./api-error";
 
@@ -23,7 +23,7 @@ function asProblemResponse(value: unknown): ProblemResponse | undefined {
   const errors = Array.isArray(value.errors)
     ? value.errors
         .filter(isRecord)
-        .map((field): ProblemFieldError => ({
+        .map((field): NormalizedProblemFieldError => ({
           code: typeof field.code === "string" ? field.code : undefined,
           message: typeof field.message === "string" ? field.message : "Validation error",
         }))
@@ -33,7 +33,7 @@ function asProblemResponse(value: unknown): ProblemResponse | undefined {
     code: typeof value.code === "string" ? value.code : undefined,
     message,
     errors,
-  };
+  } as ProblemResponse;
 }
 
 function kindFromStatus(status: number): ApiErrorKind {
@@ -69,7 +69,7 @@ function kindFromProblem(status: number, problem?: ProblemResponse): ApiErrorKin
 
 export function normalizeApiError(input: {
   status: number;
-  body?: unknown;
+  body?: ProblemResponse | unknown;
   fallbackMessage?: string;
 }): NormalizedApiError {
   const problem = asProblemResponse(input.body);

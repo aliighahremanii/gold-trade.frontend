@@ -26,13 +26,13 @@ The frontend CI must prevent:
 ## Recommended commands
 
 ```bash
-pnpm install --frozen-lockfile
-pnpm generate:api
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
-pnpm test:e2e
+bun install --frozen-lockfile
+bun run generate:api
+bun run lint
+bun run typecheck
+bun run test
+bun run build
+bun run test:e2e
 ```
 
 ## Deployment modes

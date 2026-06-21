@@ -43,6 +43,18 @@
       "pathPrefix": "/api/ledger/v1"
     },
     {
+      "module": "liquidity",
+      "contract": "contracts/openapi/liquidity.openapi.json",
+      "schema": "src/generated/api/liquidity/schema.ts",
+      "pathPrefix": "/api/liquidity/v1"
+    },
+    {
+      "module": "notification",
+      "contract": "contracts/openapi/notification.openapi.json",
+      "schema": "src/generated/api/notification/schema.ts",
+      "pathPrefix": "/api/notification/v1"
+    },
+    {
       "module": "payments",
       "contract": "contracts/openapi/payments.openapi.json",
       "schema": "src/generated/api/payments/schema.ts",
@@ -83,6 +95,74 @@
       "contract": "contracts/openapi/wallet.openapi.json",
       "schema": "src/generated/api/wallet/schema.ts",
       "pathPrefix": "/api/wallet/v1"
+    }
+  ],
+  "compatibilityPatches": [
+    {
+      "module": "admin",
+      "missingSchemas": [
+        "ProblemFieldError"
+      ]
+    },
+    {
+      "module": "audit",
+      "missingSchemas": [
+        "ProblemFieldError"
+      ]
+    },
+    {
+      "module": "compliance",
+      "missingSchemas": [
+        "ProblemFieldError"
+      ]
+    },
+    {
+      "module": "delivery",
+      "missingSchemas": [
+        "ProblemFieldError",
+        "ProblemResponse"
+      ]
+    },
+    {
+      "module": "liquidity",
+      "missingSchemas": [
+        "ProblemFieldError",
+        "ProblemResponse"
+      ]
+    },
+    {
+      "module": "payments",
+      "missingSchemas": [
+        "ProblemFieldError",
+        "ProblemResponse"
+      ]
+    },
+    {
+      "module": "pricing",
+      "missingSchemas": [
+        "ProblemFieldError",
+        "ProblemResponse"
+      ]
+    },
+    {
+      "module": "quote",
+      "missingSchemas": [
+        "ProblemFieldError",
+        "ProblemResponse"
+      ]
+    },
+    {
+      "module": "reconciliation",
+      "missingSchemas": [
+        "ProblemFieldError"
+      ]
+    },
+    {
+      "module": "trading",
+      "missingSchemas": [
+        "ProblemFieldError",
+        "ProblemResponse"
+      ]
     }
   ]
 }

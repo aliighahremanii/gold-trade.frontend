@@ -38,10 +38,10 @@ Implement admin visibility for ledger, audit, and reconciliation.
 
 ## Validation
 
-- pnpm lint
-- pnpm typecheck
-- pnpm test
-- pnpm build
+- bun run lint
+- bun run typecheck
+- bun run test
+- bun run build
 
 ## Final response
 

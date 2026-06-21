@@ -41,10 +41,10 @@ Implement sign-in/sign-up/session UX according to backend identity contracts.
 
 ## Validation
 
-- pnpm lint
-- pnpm typecheck
-- pnpm test
-- pnpm build
+- bun run lint
+- bun run typecheck
+- bun run test
+- bun run build
 
 ## Final response
 

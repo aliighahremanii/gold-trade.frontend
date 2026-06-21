@@ -2,36 +2,37 @@
 
 These JSON files are the frontend contract-freeze source of truth for generated API types.
 
+## Staging API source
+
+The frontend team syncs contracts from the shared staging API:
+
+```text
+https://saba.gold/api/{module}/v1/openapi.json
+```
+
+Examples:
+
+- https://saba.gold/api/identity/v1/openapi.json
+- https://saba.gold/api/wallet/v1/openapi.json
+
+Staging is safe for frontend development: use it to generate types and call APIs without production risk.
+
 ## Refresh workflow
 
-Preferred order:
-
-1. If the backend API is running, fetch live specs:
-
 ```bash
-OPENAPI_BASE_URL=http://localhost:8080 pnpm sync:openapi
+bun run sync:openapi
+bun run generate:api
+bun run check:api-drift
 ```
 
-2. Otherwise export from the sibling `gold-trade` backend repository:
+`sync:openapi` defaults to `https://saba.gold`. Override only when needed:
 
 ```bash
-BACKEND_ROOT=../gold-trade pnpm sync:openapi
-```
-
-3. Regenerate TypeScript types:
-
-```bash
-pnpm generate:api
-```
-
-4. Verify generated output is committed and current:
-
-```bash
-pnpm check:api-drift
+OPENAPI_BASE_URL=https://saba.gold bun run sync:openapi
 ```
 
 ## Notes
 
-- Snapshots use the default backend path prefix shape `/api/{module}/v1`.
+- Snapshots use the backend path prefix shape `/api/{module}/v1`.
 - Do not hand-edit generated files under `src/generated/api`.
-- Update `docs/api-contracts/mvp-api-contract-map.md` when backend routes or problem-detail codes change.
+- Update `docs/api-contracts/mvp-api-contract-map.md` when staging routes or problem-detail codes change.

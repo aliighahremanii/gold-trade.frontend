@@ -12,9 +12,12 @@ export type ApiModuleName =
   | "audit"
   | "compliance"
   | "reconciliation"
-  | "ledger";
+  | "ledger"
+  | "notification"
+  | "liquidity";
 
-const DEFAULT_API_BASE_URL = "http://localhost:8080";
+/** Shared staging API for frontend development and contract sync. */
+const DEFAULT_API_BASE_URL = "https://saba.gold";
 
 export function getApiBaseUrl(): string {
   const configured = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();

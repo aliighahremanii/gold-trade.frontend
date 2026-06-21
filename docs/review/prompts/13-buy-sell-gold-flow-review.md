@@ -29,16 +29,16 @@ Review quote creation, quote expiry, confirmation, duplicate submit protection, 
 Run or request results for:
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
+bun run lint
+bun run typecheck
+bun run test
+bun run build
 ```
 
 If E2E was in scope:
 
 ```bash
-pnpm test:e2e
+bun run test:e2e
 ```
 
 ## Output format

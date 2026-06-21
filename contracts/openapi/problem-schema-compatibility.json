@@ -1,0 +1,12 @@
+{
+  "admin": ["ProblemFieldError"],
+  "audit": ["ProblemFieldError"],
+  "compliance": ["ProblemFieldError"],
+  "delivery": ["ProblemFieldError", "ProblemResponse"],
+  "liquidity": ["ProblemFieldError", "ProblemResponse"],
+  "payments": ["ProblemFieldError", "ProblemResponse"],
+  "pricing": ["ProblemFieldError", "ProblemResponse"],
+  "quote": ["ProblemFieldError", "ProblemResponse"],
+  "reconciliation": ["ProblemFieldError"],
+  "trading": ["ProblemFieldError", "ProblemResponse"]
+}

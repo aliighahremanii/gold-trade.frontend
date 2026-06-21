@@ -1,3 +1,8 @@
+import type {
+  GeneratedProblemFieldError,
+  GeneratedProblemResponse,
+} from "./generated-problem-types";
+
 export type ApiErrorKind =
   | "validation_error"
   | "authentication_error"
@@ -15,14 +20,19 @@ export type ApiErrorKind =
   | "unknown_error";
 
 export type ProblemFieldError = {
-  code?: string;
-  message: string;
+  code: GeneratedProblemFieldError["code"];
+  message: GeneratedProblemFieldError["message"];
 };
 
 export type ProblemResponse = {
+  code?: GeneratedProblemResponse["code"];
+  message: GeneratedProblemResponse["message"];
+  errors?: GeneratedProblemResponse["errors"];
+};
+
+export type NormalizedProblemFieldError = {
   code?: string;
   message: string;
-  errors?: ProblemFieldError[];
 };
 
 export type NormalizedApiError = {
@@ -30,7 +40,7 @@ export type NormalizedApiError = {
   status: number;
   code?: string;
   message: string;
-  fieldErrors: ProblemFieldError[];
+  fieldErrors: NormalizedProblemFieldError[];
   raw?: unknown;
 };
 

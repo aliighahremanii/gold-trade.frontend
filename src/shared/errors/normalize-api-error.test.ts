@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import type { components as IdentityComponents } from "@/generated/api/identity";
+
 import { normalizeApiError } from "@/shared/errors";
 
 describe("normalizeApiError", () => {
@@ -23,12 +25,14 @@ describe("normalizeApiError", () => {
   });
 
   it("maps known financial workflow codes", () => {
+    const problem: IdentityComponents["schemas"]["ProblemResponse"] = {
+      code: "quote_expired",
+      message: "Quote expired.",
+    };
+
     const error = normalizeApiError({
       status: 409,
-      body: {
-        code: "quote_expired",
-        message: "Quote expired.",
-      },
+      body: problem,
     });
 
     expect(error.kind).toBe("quote_expired");

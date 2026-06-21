@@ -7,6 +7,8 @@ export type * as ComplianceApi from "./compliance";
 export type * as DeliveryApi from "./delivery";
 export type * as IdentityApi from "./identity";
 export type * as LedgerApi from "./ledger";
+export type * as LiquidityApi from "./liquidity";
+export type * as NotificationApi from "./notification";
 export type * as PaymentsApi from "./payments";
 export type * as PricingApi from "./pricing";
 export type * as QuoteApi from "./quote";

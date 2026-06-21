@@ -14,6 +14,7 @@ const repoRoot = path.resolve(__dirname, "..");
 const contractsDir = path.join(repoRoot, "contracts", "openapi");
 const generatedDir = path.join(repoRoot, "src", "generated", "api");
 const patchedContractsDir = path.join(repoRoot, ".tmp", "openapi-patched");
+const compatibilityFile = path.join(contractsDir, "problem-schema-compatibility.json");
 
 if (!existsSync(contractsDir)) {
   console.error(`Missing contracts directory: ${contractsDir}`);
@@ -24,6 +25,10 @@ const moduleNames = readdirSync(contractsDir)
   .filter((fileName) => fileName.endsWith(".openapi.json"))
   .map((fileName) => fileName.replace(".openapi.json", ""))
   .sort();
+
+const compatibilityAllowlist = existsSync(compatibilityFile)
+  ? JSON.parse(readFileSync(compatibilityFile, "utf8"))
+  : {};
 
 if (moduleNames.length === 0) {
   console.error("No OpenAPI contracts found in contracts/openapi.");
@@ -48,11 +53,15 @@ function runOpenApiTypeScript(input, output) {
 function preparePatchedContract(moduleName) {
   const source = path.join(contractsDir, `${moduleName}.openapi.json`);
   const target = path.join(patchedContractsDir, `${moduleName}.openapi.json`);
-  const document = patchOpenApiDocument(JSON.parse(readFileSync(source, "utf8")));
+  const { document, compatibilityPatch } = patchOpenApiDocument({
+    moduleName,
+    document: JSON.parse(readFileSync(source, "utf8")),
+    allowedMissingSchemas: compatibilityAllowlist[moduleName] ?? [],
+  });
 
   writeFileSync(target, `${JSON.stringify(document, null, 2)}\n`, "utf8");
 
-  return target;
+  return { target, compatibilityPatch };
 }
 
 if (existsSync(patchedContractsDir)) {
@@ -61,10 +70,16 @@ if (existsSync(patchedContractsDir)) {
 
 mkdirSync(patchedContractsDir, { recursive: true });
 
+const compatibilityPatches = [];
+
 for (const moduleName of moduleNames) {
-  const input = preparePatchedContract(moduleName);
+  const { target: input, compatibilityPatch } = preparePatchedContract(moduleName);
   const moduleDir = path.join(generatedDir, moduleName);
   const output = path.join(moduleDir, "schema.ts");
+
+  if (compatibilityPatch) {
+    compatibilityPatches.push(compatibilityPatch);
+  }
 
   spawnSync("mkdir", ["-p", moduleDir], { stdio: "inherit" });
 
@@ -77,6 +92,23 @@ for (const moduleName of moduleNames) {
   );
 }
 
+const staleCompatibilityEntries = Object.keys(compatibilityAllowlist)
+  .sort()
+  .filter(
+    (moduleName) =>
+      !compatibilityPatches.some((compatibilityPatch) => compatibilityPatch.module === moduleName),
+  );
+
+if (staleCompatibilityEntries.length > 0) {
+  console.error(
+    [
+      "Remove stale entries from contracts/openapi/problem-schema-compatibility.json:",
+      staleCompatibilityEntries.join(", "),
+    ].join(" "),
+  );
+  process.exit(1);
+}
+
 const manifest = {
   modules: moduleNames.map((moduleName) => ({
     module: moduleName,
@@ -84,6 +116,7 @@ const manifest = {
     schema: `src/generated/api/${moduleName}/schema.ts`,
     pathPrefix: `/api/${moduleName}/v1`,
   })),
+  compatibilityPatches,
 };
 
 writeFileSync(path.join(generatedDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
@@ -106,10 +139,10 @@ writeFileSync(
 );
 
 const readme = readFileSync(path.join(generatedDir, "README.md"), "utf8");
-if (!readme.includes("pnpm generate:api")) {
+if (!readme.includes("bun run generate:api")) {
   writeFileSync(
     path.join(generatedDir, "README.md"),
-    `${readme.trim()}\n\nRegenerate with \`pnpm generate:api\` after updating \`contracts/openapi\`.\n`,
+    `${readme.trim()}\n\nRegenerate with \`bun run generate:api\` after updating \`contracts/openapi\`.\n`,
     "utf8",
   );
 }
@@ -123,5 +156,13 @@ function toTypeNamespace(moduleName) {
 }
 
 console.log(`Generated API types for ${moduleNames.length} modules.`);
+
+if (compatibilityPatches.length > 0) {
+  console.warn(
+    `Applied temporary OpenAPI compatibility patches for: ${compatibilityPatches
+      .map(({ module, missingSchemas }) => `${module}(${missingSchemas.join(",")})`)
+      .join(", ")}`,
+  );
+}
 
 rmSync(patchedContractsDir, { recursive: true, force: true });

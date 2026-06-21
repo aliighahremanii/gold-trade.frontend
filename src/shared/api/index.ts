@@ -6,3 +6,4 @@ export {
   type ApiModuleName,
 } from "./config";
 export { createQueryKeyFactory, type QueryKey, type QueryKeySegment } from "./query-key";
+export { unwrapApiResponse } from "./unwrap-api-response";
