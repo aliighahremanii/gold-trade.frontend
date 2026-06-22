@@ -9,6 +9,7 @@ import { useSignUp } from "@/modules/identity/api/use-sign-up";
 import { AuthErrorAlert } from "@/modules/identity/components/auth-error-alert";
 import { AuthFormField } from "@/modules/identity/components/auth-form-field";
 import { resolvePostAuthPath } from "@/modules/identity/utils/auth-redirect";
+import { clearMobileVerificationAck } from "@/modules/identity/utils/mobile-verification-ack-storage";
 import {
   hasSignUpFieldErrors,
   validateSignUpFields,
@@ -41,6 +42,7 @@ export function SignUpFlow() {
         mobileNumber: mobileNumber.trim(),
         nationalCode: nationalCode.trim(),
       });
+      clearMobileVerificationAck();
       router.push(resolvePostAuthPath(tokens, "/dashboard"));
       router.refresh();
     } catch {

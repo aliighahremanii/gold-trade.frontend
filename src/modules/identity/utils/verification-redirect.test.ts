@@ -81,5 +81,13 @@ describe("verification redirect", () => {
         { mobileVerificationAcknowledged: true },
       ),
     ).toBe("/verify?channel=email&purpose=VerifyEmail&next=%2Fdashboard");
+
+    expect(
+      getVerifiedChannelRedirectPath(
+        { isMobileVerified: false, isEmailVerified: false },
+        OTP_CHANNEL.email,
+        "/dashboard",
+      ),
+    ).toBe("/verify?channel=sms&purpose=VerifyMobile&next=%2Fdashboard");
   });
 });

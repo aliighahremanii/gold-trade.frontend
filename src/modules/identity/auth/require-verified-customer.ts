@@ -15,7 +15,8 @@ export async function requireVerifiedCustomerSession(fallbackPath = "/dashboard"
   const currentUser = await requireAuthenticatedSession(destination);
   const userForVerification = {
     ...currentUser,
-    isMobileVerified: currentUser.isMobileVerified || hasMobileVerificationAck(cookieStore),
+    isMobileVerified:
+      currentUser.isMobileVerified || hasMobileVerificationAck(cookieStore, currentUser.userId),
   };
   const pendingVerificationPath = getPendingVerificationPath(userForVerification, destination);
 

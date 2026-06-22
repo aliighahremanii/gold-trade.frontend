@@ -9,6 +9,7 @@ import { useSignIn } from "@/modules/identity/api/use-sign-in";
 import { AuthErrorAlert } from "@/modules/identity/components/auth-error-alert";
 import { AuthFormField } from "@/modules/identity/components/auth-form-field";
 import { resolvePostAuthPath, sanitizeNextPath } from "@/modules/identity/utils/auth-redirect";
+import { clearMobileVerificationAck } from "@/modules/identity/utils/mobile-verification-ack-storage";
 import { getSignInDescription } from "@/modules/identity/utils/sign-in-description";
 
 type SignInFlowProps = {
@@ -30,6 +31,7 @@ export function SignInFlow({ nextPath, reason }: SignInFlowProps) {
 
     try {
       const tokens = await signInMutation.mutateAsync({ email, password });
+      clearMobileVerificationAck();
       router.push(resolvePostAuthPath(tokens, destination));
       router.refresh();
     } catch {

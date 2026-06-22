@@ -67,6 +67,7 @@ export async function handleAuthRoute(request: Request, path: AuthRoutePath) {
     const body = requestBody ? (JSON.parse(requestBody) as AuthRequestBody) : undefined;
 
     if (tokens.accessToken && tokens.refreshToken && body?.deviceId && body.deviceName) {
+      clearMobileVerificationAck(nextResponse);
       setSessionCookies(nextResponse, tokens, {
         deviceId: body.deviceId,
         deviceName: body.deviceName,

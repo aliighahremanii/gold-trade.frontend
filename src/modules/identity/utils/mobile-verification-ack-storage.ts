@@ -1,19 +1,19 @@
-const MOBILE_VERIFICATION_ACK_KEY = "gt_mobile_verified_ack";
+const MOBILE_VERIFICATION_ACK_USER_KEY = "gt_mobile_verified_ack_user";
 
-export function writeMobileVerificationAck() {
+export function writeMobileVerificationAck(userId: string) {
   if (typeof window === "undefined") {
     return;
   }
 
-  window.sessionStorage.setItem(MOBILE_VERIFICATION_ACK_KEY, "1");
+  window.sessionStorage.setItem(MOBILE_VERIFICATION_ACK_USER_KEY, userId);
 }
 
-export function readMobileVerificationAck() {
-  if (typeof window === "undefined") {
+export function readMobileVerificationAck(userId: string) {
+  if (typeof window === "undefined" || !userId) {
     return false;
   }
 
-  return window.sessionStorage.getItem(MOBILE_VERIFICATION_ACK_KEY) === "1";
+  return window.sessionStorage.getItem(MOBILE_VERIFICATION_ACK_USER_KEY) === userId;
 }
 
 export function clearMobileVerificationAck() {
@@ -21,5 +21,5 @@ export function clearMobileVerificationAck() {
     return;
   }
 
-  window.sessionStorage.removeItem(MOBILE_VERIFICATION_ACK_KEY);
+  window.sessionStorage.removeItem(MOBILE_VERIFICATION_ACK_USER_KEY);
 }

@@ -11,13 +11,24 @@ type IdentityProblemResponse = IdentityComponents["schemas"]["ProblemResponse"];
 
 export type VerifyOtpInput = VerifyOtpRequest & {
   ackChannel?: string;
+  ackUserId?: string;
 };
 
 export async function verifyOtp(input: VerifyOtpInput) {
-  const { ackChannel, ...body } = input;
-  const query = ackChannel ? `?ackChannel=${encodeURIComponent(ackChannel)}` : "";
+  const { ackChannel, ackUserId, ...body } = input;
+  const query = new URLSearchParams();
 
-  const result = await identityClient.POST(`/verification/otp/verify${query}` as "/verification/otp/verify", {
+  if (ackChannel) {
+    query.set("ackChannel", ackChannel);
+  }
+
+  if (ackUserId) {
+    query.set("ackUserId", ackUserId);
+  }
+
+  const queryString = query.size > 0 ? `?${query.toString()}` : "";
+
+  const result = await identityClient.POST(`/verification/otp/verify${queryString}` as "/verification/otp/verify", {
     body,
   });
 

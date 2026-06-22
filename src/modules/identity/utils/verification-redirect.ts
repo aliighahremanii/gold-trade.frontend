@@ -71,6 +71,14 @@ export function getVerifiedChannelRedirectPath(
     return getNextVerificationStepPath(effectiveUser, nextPath);
   }
 
+  if (channel === OTP_CHANNEL.email && !effectiveUser.isMobileVerified) {
+    return buildVerifyPageSearchParams({
+      channel: OTP_CHANNEL.sms,
+      purpose: OTP_PURPOSE.verifyMobile,
+      nextPath,
+    });
+  }
+
   if (channel === OTP_CHANNEL.email && user.isEmailVerified) {
     return nextPath;
   }

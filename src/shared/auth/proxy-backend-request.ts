@@ -57,7 +57,9 @@ export async function proxyBackendRequest(
 ) {
   const requestUrl = new URL(request.url);
   const ackChannel = requestUrl.searchParams.get("ackChannel");
+  const ackUserId = requestUrl.searchParams.get("ackUserId");
   requestUrl.searchParams.delete("ackChannel");
+  requestUrl.searchParams.delete("ackUserId");
   const targetUrl = `${getModuleBaseUrl(moduleName)}/${pathSegments.join("/")}${requestUrl.search}`;
   const cookieStore = await cookies();
   const headers = new Headers(buildSessionAuthHeaders(cookieStore));
@@ -173,9 +175,10 @@ export async function proxyBackendRequest(
   if (
     backendResponse.status === 204 &&
     ackChannel === "sms" &&
+    ackUserId &&
     pathSegments.join("/") === "verification/otp/verify"
   ) {
-    setMobileVerificationAck(nextResponse);
+    setMobileVerificationAck(nextResponse, ackUserId);
   }
 
   return nextResponse;

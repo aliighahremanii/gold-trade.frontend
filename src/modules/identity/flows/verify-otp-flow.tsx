@@ -118,6 +118,10 @@ function getVerificationStepCopy(
   return currentStep;
 }
 
+function hasMobileVerificationAckForUser(userId?: string) {
+  return Boolean(userId && readMobileVerificationAck(userId));
+}
+
 export function VerifyOtpFlow({ channel, purpose, nextPath }: VerifyOtpFlowProps) {
   const router = useRouter();
   const currentUserQuery = useCurrentUser();
@@ -163,7 +167,11 @@ export function VerifyOtpFlow({ channel, purpose, nextPath }: VerifyOtpFlowProps
       currentUserQuery.data,
       resolvedChannel,
       destinationPath,
-      { mobileVerificationAcknowledged: readMobileVerificationAck() },
+      {
+        mobileVerificationAcknowledged: hasMobileVerificationAckForUser(
+          currentUserQuery.data.userId,
+        ),
+      },
     );
 
     if (redirectPath) {
@@ -275,7 +283,9 @@ export function VerifyOtpFlow({ channel, purpose, nextPath }: VerifyOtpFlowProps
 
     if (
       getVerifiedChannelRedirectPath(currentUserQuery.data, resolvedChannel, destinationPath, {
-        mobileVerificationAcknowledged: readMobileVerificationAck(),
+        mobileVerificationAcknowledged: hasMobileVerificationAckForUser(
+          currentUserQuery.data.userId,
+        ),
       })
     ) {
       return;
@@ -302,14 +312,17 @@ export function VerifyOtpFlow({ channel, purpose, nextPath }: VerifyOtpFlowProps
 
     try {
       setIsContinuing(true);
+      const userId = currentUserQuery.data?.userId;
+
       await verifyOtpMutation.mutateAsync({
         challengeId,
         code: trimmedCode,
         ackChannel: resolvedChannel,
+        ackUserId: userId,
       });
 
-      if (resolvedChannel === OTP_CHANNEL.sms) {
-        writeMobileVerificationAck();
+      if (resolvedChannel === OTP_CHANNEL.sms && userId) {
+        writeMobileVerificationAck(userId);
       }
 
       clearStoredOtpChallenge(resolvedChannel, resolvedPurpose);
@@ -323,7 +336,8 @@ export function VerifyOtpFlow({ channel, purpose, nextPath }: VerifyOtpFlowProps
       const effectiveUser = user
         ? {
             ...user,
-            isMobileVerified: user.isMobileVerified || readMobileVerificationAck(),
+            isMobileVerified:
+              user.isMobileVerified || hasMobileVerificationAckForUser(user.userId),
           }
         : null;
       const nextRoute = effectiveUser
