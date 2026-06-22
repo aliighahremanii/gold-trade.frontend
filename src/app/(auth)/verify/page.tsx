@@ -1,5 +1,17 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { VerifyOtpFlow } from "@/modules/identity/flows/verify-otp-flow";
 
-export default function Page() {
-  return <ScaffoldPage title="Verify" module="identity" />;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ channel?: string; purpose?: string; next?: string }>;
+}) {
+  const params = await searchParams;
+
+  return (
+    <VerifyOtpFlow
+      channel={params.channel}
+      purpose={params.purpose}
+      nextPath={params.next}
+    />
+  );
 }

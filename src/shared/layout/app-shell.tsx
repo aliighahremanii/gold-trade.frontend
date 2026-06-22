@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { SessionStatusPanel } from "@/modules/identity/components/session-status-panel";
+import { SignOutButton } from "@/modules/identity/components/sign-out-button";
 import { AppShellNav } from "@/shared/layout/app-shell-nav";
 import { siteConfig } from "@/shared/config/site";
 
@@ -28,7 +30,13 @@ export function AppShell({ children, navItems, area }: AppShellProps) {
               {siteConfig.name}
             </Link>
           </div>
-          <AppShellNav area={area} navItems={navItems} />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+            <AppShellNav area={area} navItems={navItems} />
+            <div className="flex items-center gap-4">
+              <SessionStatusPanel />
+              <SignOutButton />
+            </div>
+          </div>
         </div>
       </header>
       <main className="flex-1">{children}</main>

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import SignInPage from "@/app/(auth)/sign-in/page";
 import DashboardPage from "@/app/(customer)/dashboard/page";
 import BuyGoldPage from "@/app/(customer)/trade/buy/page";
-import { SignInScaffoldFlow } from "@/modules/identity/flows/sign-in-scaffold-flow";
+import { SignInFlow } from "@/modules/identity/flows/sign-in-flow";
 import { BuyGoldShellFlow } from "@/modules/trading/flows/buy-gold-shell-flow";
 import { CustomerDashboardShellFlow } from "@/modules/wallet/flows/customer-dashboard-shell-flow";
 import { siteConfig } from "@/shared/config/site";
@@ -20,7 +20,7 @@ describe("scaffold", () => {
     const dashboardElement = DashboardPage();
     const buyGoldElement = BuyGoldPage();
 
-    expect(signInElement.type).toBe(SignInScaffoldFlow);
+    expect(signInElement.type).toBe(SignInFlow);
     expect(signInElement.props).toMatchObject({
       nextPath: "/dashboard",
       reason: "auth_required",

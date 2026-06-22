@@ -1,4 +1,4 @@
-import { SignInScaffoldFlow } from "@/modules/identity/flows/sign-in-scaffold-flow";
+import { SignInFlow } from "@/modules/identity/flows/sign-in-flow";
 
 export default async function Page({
   searchParams,
@@ -7,5 +7,5 @@ export default async function Page({
 }) {
   const params = await searchParams;
 
-  return <SignInScaffoldFlow nextPath={params.next} reason={params.reason} />;
+  return <SignInFlow nextPath={params.next} reason={params.reason} />;
 }

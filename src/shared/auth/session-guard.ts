@@ -2,7 +2,12 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import type { paths as IdentityPaths } from "@/generated/api/identity";
-import { createModuleClient } from "@/shared/api";
+import { createModuleClient, getModuleBaseUrl } from "@/shared/api";
+import {
+  buildSessionAuthHeaders,
+  getRefreshToken,
+  getStoredDeviceContext,
+} from "@/shared/auth/session-cookie";
 
 export type CookieValue = {
   value: string;
@@ -24,6 +29,7 @@ export type HeaderStoreLike = {
 
 export type SessionGuardConfig = {
   sessionCookieName: string;
+  refreshCookieName: string;
   adminRoleValue: string;
   signInPath: string;
 };
@@ -34,6 +40,7 @@ type CurrentUserResponse =
 export function getSessionGuardConfig(): SessionGuardConfig {
   return {
     sessionCookieName: process.env.FRONTEND_SESSION_COOKIE_NAME ?? "gt_session",
+    refreshCookieName: process.env.FRONTEND_REFRESH_COOKIE_NAME ?? "gt_refresh",
     adminRoleValue: process.env.FRONTEND_ADMIN_ROLE_VALUE ?? "admin",
     signInPath: process.env.FRONTEND_SIGN_IN_PATH ?? "/sign-in",
   };
@@ -43,7 +50,9 @@ export function hasAuthenticatedSession(
   cookieStore: CookieStoreLike,
   config: SessionGuardConfig = getSessionGuardConfig(),
 ) {
-  return Boolean(cookieStore.get(config.sessionCookieName)?.value);
+  return Boolean(
+    cookieStore.get(config.sessionCookieName)?.value || cookieStore.get(config.refreshCookieName)?.value,
+  );
 }
 
 export function userHasAdminRole(
@@ -77,23 +86,52 @@ export function buildSignInRedirect(
   return `${config.signInPath}?${params.toString()}`;
 }
 
-function serializeCookies(cookieStore: CookieStoreLike) {
-  return cookieStore
-    .getAll()
-    .map(({ name, value }) => `${encodeURIComponent(name)}=${encodeURIComponent(value)}`)
-    .join("; ");
-}
-
 async function validateCurrentUser(cookieStore: CookieStoreLike) {
   if (!hasAuthenticatedSession(cookieStore)) {
     return null;
   }
 
-  const cookieHeader = serializeCookies(cookieStore);
+  const guardConfig = getSessionGuardConfig();
+
   const identityClient = createModuleClient<IdentityPaths>("identity", {
-    headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+    baseUrl: getModuleBaseUrl("identity"),
+    headers: buildSessionAuthHeaders(cookieStore, {
+      sessionCookieName: guardConfig.sessionCookieName,
+      refreshCookieName: guardConfig.refreshCookieName,
+      deviceIdCookieName: process.env.FRONTEND_DEVICE_ID_COOKIE_NAME ?? "gt_device_id",
+      deviceNameCookieName: process.env.FRONTEND_DEVICE_NAME_COOKIE_NAME ?? "gt_device_name",
+    }),
   });
-  const result = await identityClient.GET("/me");
+  let result = await identityClient.GET("/me");
+
+  if (result.response.status === 401) {
+    const refreshToken = getRefreshToken(cookieStore);
+    const deviceContext = getStoredDeviceContext(cookieStore);
+
+    if (refreshToken && deviceContext) {
+      const refreshClient = createModuleClient<IdentityPaths>("identity", {
+        baseUrl: getModuleBaseUrl("identity"),
+      });
+      const refreshed = await refreshClient.POST("/auth/refresh", {
+        body: {
+          refreshToken,
+          deviceId: deviceContext.deviceId,
+          deviceName: deviceContext.deviceName,
+        },
+      });
+
+      if (refreshed.data?.accessToken) {
+        const refreshedClient = createModuleClient<IdentityPaths>("identity", {
+          baseUrl: getModuleBaseUrl("identity"),
+          headers: {
+            authorization: `Bearer ${refreshed.data.accessToken}`,
+          },
+        });
+
+        result = await refreshedClient.GET("/me");
+      }
+    }
+  }
 
   if (!result.data || result.error) {
     return null;

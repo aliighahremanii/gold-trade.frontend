@@ -12,6 +12,7 @@ import {
 
 const testConfig: SessionGuardConfig = {
   sessionCookieName: "session",
+  refreshCookieName: "refresh",
   adminRoleValue: "admin",
   signInPath: "/sign-in",
 };
@@ -48,6 +49,12 @@ describe("session guard", () => {
     const cookieStore = createCookieStore({});
 
     expect(hasAuthenticatedSession(cookieStore, testConfig)).toBe(false);
+  });
+
+  it("accepts requests with only a refresh cookie", () => {
+    const cookieStore = createCookieStore({ refresh: "refresh-token" });
+
+    expect(hasAuthenticatedSession(cookieStore, testConfig)).toBe(true);
   });
 
   it("requires the validated current user to hold the configured admin role", () => {

@@ -1,5 +1,5 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { SignUpFlow } from "@/modules/identity/flows/sign-up-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Sign up" module="identity" />;
+  return <SignUpFlow />;
 }
