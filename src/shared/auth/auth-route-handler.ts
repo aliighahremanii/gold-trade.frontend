@@ -9,6 +9,7 @@ import {
   forwardSetCookieHeaders,
   setSessionCookies,
 } from "@/shared/auth/session-cookie";
+import { clearMobileVerificationAck } from "@/shared/auth/verification-ack-cookie";
 
 type AuthTokensResponse = IdentityComponents["schemas"]["AuthTokensResponse"];
 type AuthRequestBody = {
@@ -47,6 +48,7 @@ export async function handleAuthRoute(request: Request, path: AuthRoutePath) {
 
     forwardSetCookieHeaders(backendResponse, nextResponse);
     clearSessionCookies(nextResponse);
+    clearMobileVerificationAck(nextResponse);
     return nextResponse;
   }
 

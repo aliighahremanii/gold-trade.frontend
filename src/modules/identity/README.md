@@ -24,6 +24,17 @@ Browser auth uses same-origin BFF routes under `src/app/api/auth/*` to establish
 client API calls route through `src/app/api/proxy/[module]/[...path]`, which can rotate tokens
 through the backend refresh contract when access tokens expire.
 
+## OTP contract
+
+`POST /verification/otp/send` `purpose` must use backend enum strings such as `VerifyMobile` and
+`VerifyEmail` (see `utils/otp-contract.ts`). Legacy values like `mobile_verification` are normalized
+before the API call.
+
+Customer routes use `requireVerifiedCustomerSession` to redirect authenticated users who still
+need **mobile** verification. Optional email verification is prompted after mobile via
+`getNextVerificationStepPath`; users can skip it until
+`config/verification-requirements.ts` sets `EMAIL_VERIFICATION_REQUIRED` to true.
+
 ## Rules
 
 - Do not duplicate backend business rules here.

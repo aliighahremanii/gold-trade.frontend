@@ -2,29 +2,39 @@ import type { NormalizedApiError } from "@/shared/errors";
 
 type AuthErrorAlertProps = {
   error: NormalizedApiError | null;
+  guidance?: string;
+  variant?: "error" | "warning";
 };
 
 const kindCopy: Partial<Record<NormalizedApiError["kind"], string>> = {
   authentication_error: "Check your credentials and try again.",
-  rate_limited: "Too many attempts. Wait a moment before trying again.",
   conflict: "An account with these details already exists.",
   validation_error: "Fix the highlighted fields and try again.",
 };
 
-export function AuthErrorAlert({ error }: AuthErrorAlertProps) {
+const variantClasses = {
+  error:
+    "border-red-200 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200",
+  warning:
+    "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-100",
+} as const;
+
+export function AuthErrorAlert({ error, guidance, variant }: AuthErrorAlertProps) {
   if (!error) {
     return null;
   }
 
-  const guidance = kindCopy[error.kind];
+  const resolvedVariant = variant ?? (error.kind === "rate_limited" ? "warning" : "error");
+  const resolvedGuidance =
+    guidance ?? (error.kind === "rate_limited" ? undefined : kindCopy[error.kind]);
 
   return (
     <div
       role="alert"
-      className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
+      className={`rounded-md border px-3 py-2 text-sm ${variantClasses[resolvedVariant]}`}
     >
       <p className="font-medium">{error.message}</p>
-      {guidance ? <p className="mt-1">{guidance}</p> : null}
+      {resolvedGuidance ? <p className="mt-1">{resolvedGuidance}</p> : null}
       {error.fieldErrors.length > 0 ? (
         <ul className="mt-2 list-disc pl-5">
           {error.fieldErrors.map((fieldError) => (

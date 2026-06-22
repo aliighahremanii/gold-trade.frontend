@@ -9,6 +9,10 @@ import { useSignUp } from "@/modules/identity/api/use-sign-up";
 import { AuthErrorAlert } from "@/modules/identity/components/auth-error-alert";
 import { AuthFormField } from "@/modules/identity/components/auth-form-field";
 import { resolvePostAuthPath } from "@/modules/identity/utils/auth-redirect";
+import {
+  hasSignUpFieldErrors,
+  validateSignUpFields,
+} from "@/modules/identity/utils/sign-up-validation";
 
 export function SignUpFlow() {
   const router = useRouter();
@@ -17,17 +21,25 @@ export function SignUpFlow() {
   const [password, setPassword] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [nationalCode, setNationalCode] = useState("");
-  const error = isNormalizedApiError(signUpMutation.error) ? signUpMutation.error : null;
+  const [fieldErrors, setFieldErrors] = useState<ReturnType<typeof validateSignUpFields>>({});
+  const apiError = isNormalizedApiError(signUpMutation.error) ? signUpMutation.error : null;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    const nextFieldErrors = validateSignUpFields({ mobileNumber, nationalCode });
+    setFieldErrors(nextFieldErrors);
+
+    if (hasSignUpFieldErrors(nextFieldErrors)) {
+      return;
+    }
 
     try {
       const tokens = await signUpMutation.mutateAsync({
         email,
         password,
-        mobileNumber,
-        nationalCode,
+        mobileNumber: mobileNumber.trim(),
+        nationalCode: nationalCode.trim(),
       });
       router.push(resolvePostAuthPath(tokens, "/dashboard"));
       router.refresh();
@@ -70,19 +82,32 @@ export function SignUpFlow() {
           label="Mobile number"
           type="tel"
           autoComplete="tel"
+          inputMode="numeric"
+          placeholder="09xxxxxxxxx"
           value={mobileNumber}
-          onChange={(event) => setMobileNumber(event.target.value)}
+          onChange={(event) => {
+            const value = event.target.value;
+            setMobileNumber(value);
+            setFieldErrors(validateSignUpFields({ mobileNumber: value, nationalCode }));
+          }}
+          error={fieldErrors.mobileNumber}
           required
         />
         <AuthFormField
           id="sign-up-national-code"
           label="National code"
+          inputMode="numeric"
           value={nationalCode}
-          onChange={(event) => setNationalCode(event.target.value)}
+          onChange={(event) => {
+            const value = event.target.value;
+            setNationalCode(value);
+            setFieldErrors(validateSignUpFields({ mobileNumber, nationalCode: value }));
+          }}
+          error={fieldErrors.nationalCode}
           required
         />
 
-        <AuthErrorAlert error={error} />
+        <AuthErrorAlert error={apiError} />
 
         <button
           type="submit"

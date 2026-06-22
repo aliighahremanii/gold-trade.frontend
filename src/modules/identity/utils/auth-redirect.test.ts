@@ -30,7 +30,20 @@ describe("getSignInDescription", () => {
 });
 
 describe("resolvePostAuthPath", () => {
-  it("routes unverified users to the verify page", () => {
+  it("routes users with unverified mobile to SMS verification", () => {
+    expect(
+      resolvePostAuthPath(
+        {
+          requiresTotp: false,
+          isEmailVerified: false,
+          isMobileVerified: false,
+        },
+        "/dashboard",
+      ),
+    ).toBe("/verify?channel=sms&purpose=VerifyMobile&next=%2Fdashboard");
+  });
+
+  it("prompts for optional email verification after mobile is complete", () => {
     expect(
       resolvePostAuthPath(
         {
@@ -40,7 +53,7 @@ describe("resolvePostAuthPath", () => {
         },
         "/dashboard",
       ),
-    ).toBe("/verify?channel=email&purpose=email_verification&next=%2Fdashboard");
+    ).toBe("/verify?channel=email&purpose=VerifyEmail&next=%2Fdashboard");
   });
 
   it("returns the next path when verification is complete", () => {

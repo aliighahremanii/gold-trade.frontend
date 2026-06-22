@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isOtpChallengeExpired } from "@/modules/identity/flows/verify-otp-flow";
+import { isOtpChallengeExpired } from "@/modules/identity/utils/otp-utils";
 
 describe("isOtpChallengeExpired", () => {
   it("returns false when there is no challenge expiry", () => {

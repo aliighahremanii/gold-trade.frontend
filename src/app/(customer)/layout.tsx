@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { AppShell } from "@/shared/layout/app-shell";
-import { requireAuthenticatedSession } from "@/shared/auth/session-guard";
+import { requireVerifiedCustomerSession } from "@/modules/identity/auth/require-verified-customer";
 import { customerNav } from "@/shared/layout/customer-nav";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default async function CustomerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await requireAuthenticatedSession();
+  await requireVerifiedCustomerSession();
 
   return <AppShell area="customer" navItems={[...customerNav]}>{children}</AppShell>;
 }

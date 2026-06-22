@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-import { getModuleBaseUrl, type ApiModuleName } from "@/shared/api/config";
 import type { paths as IdentityPaths } from "@/generated/api/identity";
 import { createModuleClient } from "@/shared/api";
+import { getModuleBaseUrl, type ApiModuleName } from "@/shared/api/config";
 import {
   buildSessionAuthHeaders,
   clearSessionCookies,
@@ -11,6 +11,7 @@ import {
   getStoredDeviceContext,
   setSessionCookies,
 } from "@/shared/auth/session-cookie";
+import { setMobileVerificationAck } from "@/shared/auth/verification-ack-cookie";
 
 const ALLOWED_PROXY_MODULES: ApiModuleName[] = [
   "identity",
@@ -35,12 +36,28 @@ export function isAllowedProxyModule(moduleName: string): moduleName is ApiModul
   return ALLOWED_PROXY_MODULES.includes(moduleName as ApiModuleName);
 }
 
+async function readProblemCode(response: Response) {
+  try {
+    const body = (await response.clone().json()) as { code?: unknown };
+
+    return typeof body.code === "string" ? body.code : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function isOtpBusinessError(problemCode?: string) {
+  return problemCode?.startsWith("Identity.Otp") ?? false;
+}
+
 export async function proxyBackendRequest(
   request: Request,
   moduleName: ApiModuleName,
   pathSegments: string[],
 ) {
   const requestUrl = new URL(request.url);
+  const ackChannel = requestUrl.searchParams.get("ackChannel");
+  requestUrl.searchParams.delete("ackChannel");
   const targetUrl = `${getModuleBaseUrl(moduleName)}/${pathSegments.join("/")}${requestUrl.search}`;
   const cookieStore = await cookies();
   const headers = new Headers(buildSessionAuthHeaders(cookieStore));
@@ -69,6 +86,8 @@ export async function proxyBackendRequest(
   }
 
   let backendResponse = await forwardRequest();
+  let problemCode =
+    backendResponse.status === 401 ? await readProblemCode(backendResponse) : undefined;
 
   let refreshedTokens:
     | {
@@ -81,7 +100,7 @@ export async function proxyBackendRequest(
       }
     | null = null;
 
-  if (backendResponse.status === 401) {
+  if (backendResponse.status === 401 && !isOtpBusinessError(problemCode)) {
     const refreshToken = getRefreshToken(cookieStore);
     const deviceContext = getStoredDeviceContext(cookieStore);
 
@@ -107,6 +126,8 @@ export async function proxyBackendRequest(
           deviceName: deviceContext.deviceName,
         };
         backendResponse = await forwardRequest(`Bearer ${refreshed.data.accessToken}`);
+        problemCode =
+          backendResponse.status === 401 ? await readProblemCode(backendResponse) : undefined;
       }
     }
   }
@@ -118,10 +139,16 @@ export async function proxyBackendRequest(
     responseHeaders.set("content-type", backendContentType);
   }
 
-  const nextResponse = new NextResponse(await backendResponse.arrayBuffer(), {
-    status: backendResponse.status,
-    headers: responseHeaders,
-  });
+  const status = backendResponse.status;
+  const hasResponseBody = status !== 204 && status !== 205 && status !== 304;
+
+  const nextResponse = new NextResponse(
+    hasResponseBody ? await backendResponse.arrayBuffer() : null,
+    {
+      status,
+      headers: responseHeaders,
+    },
+  );
 
   if (refreshedTokens) {
     setSessionCookies(
@@ -139,8 +166,16 @@ export async function proxyBackendRequest(
     );
   }
 
-  if (backendResponse.status === 401 && !refreshedTokens) {
+  if (backendResponse.status === 401 && !refreshedTokens && !isOtpBusinessError(problemCode)) {
     clearSessionCookies(nextResponse);
+  }
+
+  if (
+    backendResponse.status === 204 &&
+    ackChannel === "sms" &&
+    pathSegments.join("/") === "verification/otp/verify"
+  ) {
+    setMobileVerificationAck(nextResponse);
   }
 
   return nextResponse;

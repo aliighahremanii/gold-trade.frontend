@@ -1,4 +1,4 @@
-import { VerifyOtpFlow } from "@/modules/identity/flows/verify-otp-flow";
+import { VerifyFlow } from "@/modules/identity/flows/verify-flow";
 
 export default async function Page({
   searchParams,
@@ -8,7 +8,7 @@ export default async function Page({
   const params = await searchParams;
 
   return (
-    <VerifyOtpFlow
+    <VerifyFlow
       channel={params.channel}
       purpose={params.purpose}
       nextPath={params.next}
