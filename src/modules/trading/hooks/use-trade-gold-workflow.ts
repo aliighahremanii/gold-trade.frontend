@@ -13,7 +13,7 @@ import { useCreateOrder, useOrder } from "@/modules/trading/api/use-orders";
 import { toNormalizedApiError } from "@/modules/trading/components/trade-error-alert";
 import { mapQuoteDetailToSummary } from "@/modules/trading/mappers/map-quote-summary";
 import type { TradeWorkflowPhase } from "@/modules/trading/types/trade-workflow";
-import { createIdempotencyKey } from "@/modules/trading/utils/idempotency";
+import { createIdempotencyKey } from "@/shared/utils/idempotency";
 import {
   isManualReviewOrderStatus,
   isSettlementFailedOrderStatus,

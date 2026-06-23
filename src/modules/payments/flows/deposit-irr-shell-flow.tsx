@@ -1,11 +1,11 @@
-import { CustomerWorkflowShell } from "@/shared/layout/customer-workflow-shell";
+"use client";
 
-export function DepositIrrShellFlow() {
-  return (
-    <CustomerWorkflowShell
-      title="Deposit IRR"
-      module="payments"
-      description="Deposit intents and pending gateway states will follow backend payment APIs."
-    />
-  );
+import { DepositIrrFlow } from "@/modules/payments/flows/deposit-irr-flow";
+
+type DepositIrrShellFlowProps = {
+  initialDepositId?: string | null;
+};
+
+export function DepositIrrShellFlow({ initialDepositId = null }: DepositIrrShellFlowProps) {
+  return <DepositIrrFlow initialDepositId={initialDepositId} />;
 }

@@ -1,11 +1,7 @@
-import { CustomerWorkflowShell } from "@/shared/layout/customer-workflow-shell";
+"use client";
+
+import { WithdrawIrrFlow } from "@/modules/payments/flows/withdraw-irr-flow";
 
 export function WithdrawIrrShellFlow() {
-  return (
-    <CustomerWorkflowShell
-      title="Withdraw IRR"
-      module="payments"
-      description="Withdrawal requests and payout status will follow backend payment APIs."
-    />
-  );
+  return <WithdrawIrrFlow />;
 }
