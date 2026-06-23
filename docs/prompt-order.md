@@ -10,6 +10,13 @@ Use implementation prompts and review prompts in pairs. Do not let the same agen
 4. `docs/prompts/02-api-contract-freeze.md`
 5. `docs/review/prompts/01-api-contract-review.md`
 
+## Shared UI system
+
+Run after Phase 0 foundation and before Phase 1, or in parallel with early customer MVP work.
+
+- `docs/prompts/03-shared-ui.md`
+- `docs/review/prompts/03-shared-ui-review.md`
+
 ## Phase 1 — Customer MVP
 
 6. `docs/prompts/10-customer-app-shell.md`
