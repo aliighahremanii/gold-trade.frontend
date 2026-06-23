@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { useSetMarketStatus } from "@/modules/admin/api/use-admin-pricing";
-import { toNormalizedApiError } from "@/modules/pricing/components/pricing-error-alert";
+import { toNormalizedApiError } from "@/shared/errors";
 import {
   getPricingQueryErrorMessage,
   useInvalidateMarketPricing,

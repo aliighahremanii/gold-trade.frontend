@@ -1,21 +1,12 @@
+import { formatTimestamp } from "@/shared/utils/format-timestamp";
+
 const DEFAULT_LOCALE = "en-US";
 
 export function formatIrrPriceAmount(amount: number, locale: string = DEFAULT_LOCALE): string {
   return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(amount)} IRR`;
 }
 
-export function formatPricingTimestamp(value: string, locale: string = DEFAULT_LOCALE): string {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-}
+export const formatPricingTimestamp = formatTimestamp;
 
 export function parseIrrPriceInput(value: string): number | null {
   const normalized = value.trim().replace(/,/g, "");

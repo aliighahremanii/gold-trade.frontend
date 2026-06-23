@@ -1,5 +1,5 @@
-import { AdminSectionShellFlow } from "@/modules/admin/flows/admin-section-shell-flow";
+import { AdminOrdersFlow } from "@/modules/trading/flows/admin-orders-flow";
 
 export default function Page() {
-  return <AdminSectionShellFlow title="Orders" module="trading" href="/admin/orders" />;
+  return <AdminOrdersFlow />;
 }

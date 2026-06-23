@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { useSetManualPrice } from "@/modules/admin/api/use-admin-pricing";
-import { toNormalizedApiError } from "@/modules/pricing/components/pricing-error-alert";
+import { toNormalizedApiError } from "@/shared/errors";
 import {
   getPricingQueryErrorMessage,
   isSelectedPriceUnavailableError,

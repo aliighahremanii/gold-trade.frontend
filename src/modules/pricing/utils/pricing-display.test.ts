@@ -6,11 +6,13 @@ import {
 } from "@/modules/pricing/mappers/map-pricing-views";
 import {
   formatIrrPriceAmount,
+  formatPricingTimestamp,
   fromDateTimeLocalValue,
   isValidPriceValidityWindow,
   parseIrrPriceInput,
   toDateTimeLocalValue,
 } from "@/modules/pricing/utils/format-price-amount";
+import { formatTimestamp } from "@/shared/utils/format-timestamp";
 import { formatMarketStatusLabel } from "@/modules/pricing/utils/market-status";
 
 describe("formatIrrPriceAmount", () => {
@@ -39,6 +41,12 @@ describe("datetime helpers", () => {
 
     expect(local).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
     expect(fromDateTimeLocalValue(local)).toBeTruthy();
+  });
+
+  it("formats timestamps through the shared helper", () => {
+    expect(formatPricingTimestamp("2026-06-23T12:00:00.000Z")).toBe(
+      formatTimestamp("2026-06-23T12:00:00.000Z"),
+    );
   });
 
   it("accepts open-ended or ordered validity windows", () => {

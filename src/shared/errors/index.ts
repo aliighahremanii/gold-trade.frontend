@@ -6,4 +6,5 @@ export {
   type ProblemFieldError,
   type ProblemResponse,
 } from "./api-error";
+export { ApiErrorAlert, toNormalizedApiError } from "./api-error-alert";
 export { normalizeApiError, normalizeFetchError } from "./normalize-api-error";
