@@ -1,5 +1,7 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { AdminSectionShellFlow } from "@/modules/admin/flows/admin-section-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Delivery" module="delivery" />;
+  return (
+    <AdminSectionShellFlow title="Delivery" module="delivery" href="/admin/delivery" />
+  );
 }

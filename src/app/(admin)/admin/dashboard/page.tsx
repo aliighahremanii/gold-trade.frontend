@@ -1,5 +1,5 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { AdminDashboardShellFlow } from "@/modules/admin/flows/admin-dashboard-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Admin dashboard" module="admin" />;
+  return <AdminDashboardShellFlow />;
 }

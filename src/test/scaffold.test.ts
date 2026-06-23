@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import SignInPage from "@/app/(auth)/sign-in/page";
+import AdminDashboardPage from "@/app/(admin)/admin/dashboard/page";
 import DashboardPage from "@/app/(customer)/dashboard/page";
 import BuyGoldPage from "@/app/(customer)/trade/buy/page";
+import { AdminDashboardShellFlow } from "@/modules/admin/flows/admin-dashboard-shell-flow";
 import { SignInFlow } from "@/modules/identity/flows/sign-in-flow";
 import { BuyGoldShellFlow } from "@/modules/trading/flows/buy-gold-shell-flow";
 import { CustomerDashboardShellFlow } from "@/modules/wallet/flows/customer-dashboard-shell-flow";
@@ -18,6 +20,7 @@ describe("scaffold", () => {
       searchParams: Promise.resolve({ next: "/dashboard", reason: "auth_required" }),
     });
     const dashboardElement = DashboardPage();
+    const adminDashboardElement = AdminDashboardPage();
     const buyGoldElement = BuyGoldPage();
 
     expect(signInElement.type).toBe(SignInFlow);
@@ -27,6 +30,7 @@ describe("scaffold", () => {
     });
 
     expect(dashboardElement.type).toBe(CustomerDashboardShellFlow);
+    expect(adminDashboardElement.type).toBe(AdminDashboardShellFlow);
     expect(buyGoldElement.type).toBe(BuyGoldShellFlow);
   });
 });

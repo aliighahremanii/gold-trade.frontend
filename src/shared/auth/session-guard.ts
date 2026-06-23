@@ -86,6 +86,15 @@ export function buildSignInRedirect(
   return `${config.signInPath}?${params.toString()}`;
 }
 
+export function buildAccessDeniedRedirect(
+  nextPath: string,
+  reason: "admin_required" = "admin_required",
+) {
+  const params = new URLSearchParams({ next: nextPath, reason });
+
+  return `/access-denied?${params.toString()}`;
+}
+
 async function validateCurrentUser(cookieStore: CookieStoreLike) {
   if (!hasAuthenticatedSession(cookieStore)) {
     return null;
@@ -162,7 +171,7 @@ export async function requireAdminSession(fallbackPath = "/admin/dashboard") {
   }
 
   if (!userHasAdminRole(currentUser)) {
-    redirect(buildSignInRedirect(destination, "admin_required"));
+    redirect(buildAccessDeniedRedirect(destination));
   }
 
   return currentUser;

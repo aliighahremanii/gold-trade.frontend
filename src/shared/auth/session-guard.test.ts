@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildAccessDeniedRedirect,
   buildSignInRedirect,
   getRequestedDestination,
   hasAuthenticatedSession,
@@ -80,8 +81,14 @@ describe("session guard", () => {
   });
 
   it("builds sign-in redirects with the original destination and reason", () => {
-    expect(buildSignInRedirect("/admin/dashboard", "admin_required", testConfig)).toBe(
-      "/sign-in?next=%2Fadmin%2Fdashboard&reason=admin_required",
+    expect(buildSignInRedirect("/admin/dashboard", "auth_required", testConfig)).toBe(
+      "/sign-in?next=%2Fadmin%2Fdashboard&reason=auth_required",
+    );
+  });
+
+  it("builds access-denied redirects for authenticated non-admin users", () => {
+    expect(buildAccessDeniedRedirect("/admin/dashboard")).toBe(
+      "/access-denied?next=%2Fadmin%2Fdashboard&reason=admin_required",
     );
   });
 });

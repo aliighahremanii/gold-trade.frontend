@@ -1,5 +1,11 @@
-import { ScaffoldPage } from "@/shared/layout/scaffold-page";
+import { AdminSectionShellFlow } from "@/modules/admin/flows/admin-section-shell-flow";
 
 export default function Page() {
-  return <ScaffoldPage title="Reconciliation" module="reconciliation" />;
+  return (
+    <AdminSectionShellFlow
+      title="Reconciliation"
+      module="reconciliation"
+      href="/admin/reconciliation"
+    />
+  );
 }

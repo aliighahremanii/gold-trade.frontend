@@ -18,7 +18,7 @@ export function isNavItemActive(pathname: string, href: string) {
     return true;
   }
 
-  if (href === "/dashboard") {
+  if (href === "/dashboard" || href === "/admin/dashboard") {
     return false;
   }
 
