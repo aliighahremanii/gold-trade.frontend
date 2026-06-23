@@ -2,5 +2,5 @@ import { createQueryKeyFactory } from "@/shared/api";
 
 export const settlementQueryKeys = {
   ...createQueryKeyFactory("settlement"),
-  tradeSettlement: (tradeId: string) => ["settlement", "trades", tradeId] as const,
+  settlement: (settlementId: string) => ["settlement", "settlements", settlementId] as const,
 };
