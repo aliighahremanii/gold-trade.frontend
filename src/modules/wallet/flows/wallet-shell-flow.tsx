@@ -1,11 +1,5 @@
-import { CustomerWorkflowShell } from "@/shared/layout/customer-workflow-shell";
+import { WalletOverviewFlow } from "@/modules/wallet/flows/wallet-overview-flow";
 
 export function WalletShellFlow() {
-  return (
-    <CustomerWorkflowShell
-      title="Wallet"
-      module="wallet"
-      description="IRR and XAU balances, locked amounts, and portfolio overview will load from wallet APIs."
-    />
-  );
+  return <WalletOverviewFlow />;
 }
