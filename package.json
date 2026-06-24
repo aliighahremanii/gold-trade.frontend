@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "sync:openapi": "node scripts/sync-openapi-snapshots.mjs",
     "generate:api": "node scripts/generate-api.mjs",
     "check:api-drift": "node scripts/generate-api.mjs && git diff --exit-code -- src/generated/api"

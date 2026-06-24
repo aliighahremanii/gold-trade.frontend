@@ -52,3 +52,17 @@ delivery cancelled
 - Keep tests deterministic.
 - Capture traces/screenshots/videos on failure.
 - Separate mocked frontend tests from backend-real launch validation.
+
+## Playwright layout
+
+```text
+test/e2e/
+  mock-api/server.mjs     # local API for CI workflow suites
+  fixtures/               # auth helpers and credential strategy
+  smoke/                  # auth guards and public pages (always run in CI)
+  workflows/              # customer/admin happy paths against mock API
+  backend-real/           # optional staging checks (requires E2E_* credentials)
+```
+
+Default CI runs `smoke` and `workflows` projects against the mock API started by `playwright.config.ts`.
+Set `E2E_MODE=backend-real` with `E2E_CUSTOMER_EMAIL` / `E2E_CUSTOMER_PASSWORD` (and admin vars) to run staging validation locally or in a protected CI job.
