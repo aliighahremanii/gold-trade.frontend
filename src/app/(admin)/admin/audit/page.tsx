@@ -1,5 +1,5 @@
-import { AdminSectionShellFlow } from "@/modules/admin/flows/admin-section-shell-flow";
+import { AdminAuditFlow } from "@/modules/audit/flows/admin-audit-flow";
 
 export default function Page() {
-  return <AdminSectionShellFlow title="Audit" module="audit" href="/admin/audit" />;
+  return <AdminAuditFlow />;
 }

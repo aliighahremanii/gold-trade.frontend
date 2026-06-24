@@ -1,11 +1,5 @@
-import { AdminSectionShellFlow } from "@/modules/admin/flows/admin-section-shell-flow";
+import { AdminReconciliationFlow } from "@/modules/reconciliation/flows/admin-reconciliation-flow";
 
 export default function Page() {
-  return (
-    <AdminSectionShellFlow
-      title="Reconciliation"
-      module="reconciliation"
-      href="/admin/reconciliation"
-    />
-  );
+  return <AdminReconciliationFlow />;
 }

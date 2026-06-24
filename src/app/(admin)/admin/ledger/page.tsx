@@ -1,5 +1,5 @@
-import { AdminSectionShellFlow } from "@/modules/admin/flows/admin-section-shell-flow";
+import { AdminLedgerFlow } from "@/modules/ledger/flows/admin-ledger-flow";
 
 export default function Page() {
-  return <AdminSectionShellFlow title="Ledger" module="audit" href="/admin/ledger" />;
+  return <AdminLedgerFlow />;
 }
