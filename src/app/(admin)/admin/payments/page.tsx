@@ -1,7 +1,5 @@
-import { AdminSectionShellFlow } from "@/modules/admin/flows/admin-section-shell-flow";
+import { AdminPaymentsFlow } from "@/modules/payments/flows/admin-payments-flow";
 
 export default function Page() {
-  return (
-    <AdminSectionShellFlow title="Payments" module="payments" href="/admin/payments" />
-  );
+  return <AdminPaymentsFlow />;
 }

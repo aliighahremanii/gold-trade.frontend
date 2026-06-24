@@ -120,6 +120,20 @@ export function getDepositStatusLabel(status: string): string {
   return status;
 }
 
+export function isConfirmableDepositStatus(status: string): boolean {
+  const normalized = normalizePaymentStatus(status);
+
+  if (isTerminalDepositStatus(normalized) || isSuccessfulDepositStatus(normalized)) {
+    return false;
+  }
+
+  return (
+    isPendingDepositStatus(normalized) ||
+    normalized.includes("awaiting") ||
+    normalized.includes("manual")
+  );
+}
+
 export function getWithdrawalStatusLabel(status: string): string {
   const normalized = normalizePaymentStatus(status);
 
@@ -144,4 +158,27 @@ export function getWithdrawalStatusLabel(status: string): string {
   }
 
   return status;
+}
+
+export function isApprovableWithdrawalStatus(status: string): boolean {
+  return isManualReviewWithdrawalStatus(status);
+}
+
+export function isCompletableWithdrawalStatus(status: string): boolean {
+  const normalized = normalizePaymentStatus(status);
+  return normalized === "approved";
+}
+
+export function isRejectableWithdrawalStatus(status: string): boolean {
+  const normalized = normalizePaymentStatus(status);
+
+  if (isTerminalWithdrawalStatus(normalized)) {
+    return false;
+  }
+
+  return (
+    isManualReviewWithdrawalStatus(normalized) ||
+    isPendingWithdrawalStatus(normalized) ||
+    normalized === "approved"
+  );
 }

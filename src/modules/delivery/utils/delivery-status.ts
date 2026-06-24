@@ -104,3 +104,30 @@ export function getDeliveryStatusLabel(status: string): string {
 
   return status;
 }
+
+export function isApprovableDeliveryStatus(status: string): boolean {
+  return isManualReviewDeliveryStatus(status);
+}
+
+export function isSchedulableDeliveryStatus(status: string): boolean {
+  return normalizeDeliveryStatus(status) === "approved";
+}
+
+export function isCompletableDeliveryStatus(status: string): boolean {
+  return normalizeDeliveryStatus(status) === "scheduled";
+}
+
+export function isRejectableDeliveryStatus(status: string): boolean {
+  const normalized = normalizeDeliveryStatus(status);
+
+  if (isTerminalDeliveryStatus(normalized)) {
+    return false;
+  }
+
+  return (
+    isManualReviewDeliveryStatus(normalized) ||
+    isPendingDeliveryStatus(normalized) ||
+    normalized === "approved" ||
+    normalized === "scheduled"
+  );
+}

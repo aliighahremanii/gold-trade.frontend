@@ -71,13 +71,32 @@ export function isPendingReviewCase(status: string): boolean {
 }
 
 export function extractOrderIdFromReviewCase(reviewCase: ReviewCaseView): string | null {
+  return extractBusinessReferenceForOperation(reviewCase, ["order", "trade"]);
+}
+
+export function extractDepositIdFromReviewCase(reviewCase: ReviewCaseView): string | null {
+  return extractBusinessReferenceForOperation(reviewCase, ["deposit"]);
+}
+
+export function extractWithdrawalIdFromReviewCase(reviewCase: ReviewCaseView): string | null {
+  return extractBusinessReferenceForOperation(reviewCase, ["withdrawal", "withdraw"]);
+}
+
+export function extractDeliveryRequestIdFromReviewCase(reviewCase: ReviewCaseView): string | null {
+  return extractBusinessReferenceForOperation(reviewCase, ["delivery"]);
+}
+
+function extractBusinessReferenceForOperation(
+  reviewCase: ReviewCaseView,
+  operationTokens: string[],
+): string | null {
   if (!reviewCase.businessReference) {
     return null;
   }
 
   const operationType = reviewCase.operationType?.toLowerCase() ?? "";
 
-  if (operationType.includes("order") || operationType.includes("trade")) {
+  if (operationTokens.some((token) => operationType.includes(token))) {
     return reviewCase.businessReference;
   }
 

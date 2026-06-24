@@ -1,7 +1,5 @@
-import { AdminSectionShellFlow } from "@/modules/admin/flows/admin-section-shell-flow";
+import { AdminDeliveryFlow } from "@/modules/delivery/flows/admin-delivery-flow";
 
 export default function Page() {
-  return (
-    <AdminSectionShellFlow title="Delivery" module="delivery" href="/admin/delivery" />
-  );
+  return <AdminDeliveryFlow />;
 }

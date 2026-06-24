@@ -6,4 +6,6 @@ export const adminQueryKeys = {
   marketStatus: (symbol: string) => ["admin", "pricing", "markets", symbol, "status"] as const,
   orders: () => ["admin", "orders"] as const,
   approvals: () => ["admin", "approvals"] as const,
+  payments: () => ["admin", "payments"] as const,
+  delivery: () => ["admin", "delivery"] as const,
 };
