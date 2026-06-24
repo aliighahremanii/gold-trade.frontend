@@ -1,14 +1,43 @@
 services:
   frontend:
-    image: registry.example.com/trade/frontend:latest
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_APP_ENV: production
+        NEXT_PUBLIC_API_BASE_URL: https://api.example.com
+    image: gold-trade-frontend:latest
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_APP_ENV: production
-      NEXT_PUBLIC_API_BASE_URL: https://api.example.com
+      FRONTEND_SIGN_IN_PATH: /sign-in
+      FRONTEND_SESSION_COOKIE_NAME: gt_session
+      FRONTEND_REFRESH_COOKIE_NAME: gt_refresh
+      FRONTEND_DEVICE_ID_COOKIE_NAME: gt_device_id
+      FRONTEND_DEVICE_NAME_COOKIE_NAME: gt_device_name
+      FRONTEND_ADMIN_ROLE_VALUE: admin
+    networks:
+      - web
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
     networks:
       - web
 
 networks:
   web:
     external: true
+
+volumes:
+  caddy_data:
+  caddy_config:

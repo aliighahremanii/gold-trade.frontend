@@ -1,46 +1,69 @@
-# CI/CD Strategy
+# Self-Hosted Frontend Deployment
 
-## Goals
+This folder contains reference configuration for running the Next.js standalone image behind Caddy.
 
-The frontend CI must prevent:
+Canonical build files live at the repository root:
 
-- type errors
-- lint violations
-- broken generated API clients
-- broken builds
-- broken critical workflows
-- accidental dependency/security issues
+- `Dockerfile` — multi-stage Bun standalone image
+- `.github/workflows/frontend-ci.yml` — lint, typecheck, tests, build, E2E
+- `.github/workflows/docker-publish.yml` — GHCR image build with BuildKit GHA cache
 
-## Recommended CI stages
+## Deployment mode
 
-1. Install dependencies with lockfile enforcement
-2. Generate API client from OpenAPI or verify generated client is up to date
-3. Lint
-4. Type check
-5. Unit/component tests
-6. Build
-7. Playwright E2E tests against mocked or test backend
-8. Docker image build if self-hosting
-9. Artifact upload: Playwright traces and reports
+The frontend uses **Next.js `output: "standalone"`** and is intended for **self-hosted Docker behind Caddy** when the backend stack is already self-hosted.
 
-## Recommended commands
+Server routes (auth proxy, session guards, admin layout checks) require a Node/Bun runtime. Static export is not supported.
+
+## Build the image
+
+`NEXT_PUBLIC_*` values are inlined at **image build time**. Server-only `FRONTEND_*` values are read at **container runtime**.
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_APP_ENV=production \
+  --build-arg NEXT_PUBLIC_API_BASE_URL=https://api.example.com \
+  -t gold-trade-frontend:latest .
+```
+
+Run with runtime session-guard integration:
+
+```bash
+docker run --rm -p 3000:3000 \
+  -e FRONTEND_SESSION_COOKIE_NAME=gt_session \
+  -e FRONTEND_REFRESH_COOKIE_NAME=gt_refresh \
+  -e FRONTEND_ADMIN_ROLE_VALUE=admin \
+  gold-trade-frontend:latest
+```
+
+See `docs/environment.md` for the full variable list.
+
+## Compose + Caddy
+
+1. Copy `docker-compose.frontend.example.yml` and `Caddyfile.example` to your deployment repo or ops folder.
+2. Point `NEXT_PUBLIC_API_BASE_URL` build args and runtime `FRONTEND_*` values at your production gateway.
+3. Attach the frontend service and Caddy to a shared external Docker network that can reach the backend API.
+4. Terminate TLS in Caddy and forward `X-Forwarded-Proto` / `X-Forwarded-Host` to the Next.js server.
+
+`Caddyfile.example` adds HSTS at the edge. The app still ships its own CSP and baseline security headers from `next.config.ts`.
+
+## CI artifacts
+
+`frontend-ci` uploads on every run:
+
+- `playwright-report-<run_id>` — HTML report (`playwright-report/`)
+- `playwright-traces-<run_id>` — traces and screenshots on failure (`test-results/`)
+
+Download artifacts from the GitHub Actions run summary when debugging flaky workflow specs.
+
+## Local parity
 
 ```bash
 bun install --frozen-lockfile
-bun run generate:api
 bun run lint
 bun run typecheck
 bun run test
 bun run build
-bun run test:e2e
+CI=true bun run test:e2e
 ```
 
-## Deployment modes
-
-Choose one and document it:
-
-- Vercel deployment
-- Self-hosted Next.js standalone Docker image behind Caddy
-- Static export only if the app has no server-runtime requirements
-
-For this financial platform, self-hosted Docker behind Caddy is often a good fit if the backend stack is already self-hosted.
+`CI=true` makes Playwright use `next start` (production server) instead of `next dev`, matching the CI job.

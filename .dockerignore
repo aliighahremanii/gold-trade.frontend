@@ -34,5 +34,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Docs
+# Docs & local-only assets
 README.md
+docs
+test
+playwright-report
+test-results
+ci-cd

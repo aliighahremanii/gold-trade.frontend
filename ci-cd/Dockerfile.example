@@ -1,25 +1,40 @@
-# Example self-hosted Next.js Dockerfile
+# syntax=docker/dockerfile:1
 
-FROM oven/bun:1 AS deps
+# Reference example — the canonical production image is ../Dockerfile at repo root.
+# Build from repository root:
+#   docker build -f Dockerfile .
+
+ARG BUN_VERSION=1.3.14
+ARG NEXT_PUBLIC_APP_ENV=production
+ARG NEXT_PUBLIC_API_BASE_URL
+
+FROM oven/bun:${BUN_VERSION}-slim AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
-FROM oven/bun:1 AS builder
+FROM oven/bun:${BUN_VERSION}-slim AS builder
 WORKDIR /app
+ARG NEXT_PUBLIC_APP_ENV
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+ENV NEXT_PUBLIC_APP_ENV=${NEXT_PUBLIC_APP_ENV}
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN bun run generate:api && bun run build
+RUN bun run build
 
-FROM node:22-alpine AS runner
+FROM oven/bun:${BUN_VERSION}-distroless AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-
-# For Next.js standalone output, set output: 'standalone' in next.config.
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
-
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
+COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone ./
+COPY --from=builder --chown=nonroot:nonroot /app/.next/static ./.next/static
+COPY --from=builder --chown=nonroot:nonroot /app/public ./public
+USER nonroot
 EXPOSE 3000
-CMD ["node", "server.js"]
+ENTRYPOINT ["bun"]
+CMD ["server.js"]

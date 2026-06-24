@@ -49,6 +49,32 @@ For local backend development only, override `NEXT_PUBLIC_API_BASE_URL` and `OPE
 Server-side route protection uses the `FRONTEND_*` values above to read backend-managed session and role cookies in App Router layouts.
 These values are integration points, not a replacement for backend authorization rules.
 
+## Production / Docker
+
+| Variable | When set | Notes |
+| --- | --- | --- |
+| `NEXT_PUBLIC_APP_ENV` | Image **build** | `production` for release images |
+| `NEXT_PUBLIC_API_BASE_URL` | Image **build** | Public API gateway origin (no trailing slash). Inlined into client bundles and production CSP `connect-src`. |
+| `FRONTEND_SIGN_IN_PATH` | Container **runtime** | Sign-in redirect path |
+| `FRONTEND_SESSION_COOKIE_NAME` | Container **runtime** | Backend session cookie name |
+| `FRONTEND_REFRESH_COOKIE_NAME` | Container **runtime** | Backend refresh cookie name |
+| `FRONTEND_DEVICE_ID_COOKIE_NAME` | Container **runtime** | Device id cookie name |
+| `FRONTEND_DEVICE_NAME_COOKIE_NAME` | Container **runtime** | Device name cookie name |
+| `FRONTEND_ADMIN_ROLE_VALUE` | Container **runtime** | Role string validated via backend `/me` |
+
+Example production image build:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_APP_ENV=production \
+  --build-arg NEXT_PUBLIC_API_BASE_URL=https://api.example.com \
+  -t gold-trade-frontend:latest .
+```
+
+`OPENAPI_BASE_URL` is only required on developer machines and in CI for optional live contract sync; it is not needed in the production runtime container.
+
+GitHub Actions can set `PRODUCTION_API_BASE_URL` as a repository variable for `docker-publish` builds. See `docs/ci-cd.md` and `ci-cd/README.md`.
+
 ## Package manager
 
 Use Bun for install, scripts, and CI:

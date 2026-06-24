@@ -1,7 +1,11 @@
 # syntax=docker/dockerfile:1
 
 # Single source of truth for the Bun version used across every stage.
-ARG BUN_VERSION=1.3
+ARG BUN_VERSION=1.3.14
+
+# Browser-visible values must be supplied at image build time for Next.js.
+ARG NEXT_PUBLIC_APP_ENV=production
+ARG NEXT_PUBLIC_API_BASE_URL
 
 # ---- Dependencies -----------------------------------------------------------
 # Install dependencies in a full image (distroless has no shell, so RUN there
@@ -14,8 +18,12 @@ RUN bun install --frozen-lockfile
 # ---- Builder ----------------------------------------------------------------
 FROM oven/bun:${BUN_VERSION}-slim AS builder
 WORKDIR /app
+ARG NEXT_PUBLIC_APP_ENV
+ARG NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_APP_ENV=${NEXT_PUBLIC_APP_ENV}
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN bun run build
