@@ -6,14 +6,22 @@ const mockApiBaseUrl = `http://127.0.0.1:${mockApiPort}`;
 const stagingApiBaseUrl = process.env.E2E_API_BASE_URL ?? "https://saba.gold";
 const useMockApi = process.env.E2E_MODE !== "backend-real";
 
+const e2eServerOverrides = {
+  // Production `next start` in CI must still hydrate and persist sessions over HTTP.
+  FRONTEND_SECURITY_PROFILE: "development",
+  FRONTEND_INSECURE_COOKIES: "true",
+} as const;
+
 const nextAppEnv = useMockApi
   ? {
       NEXT_PUBLIC_API_BASE_URL: mockApiBaseUrl,
       OPENAPI_BASE_URL: mockApiBaseUrl,
+      ...e2eServerOverrides,
     }
   : {
       NEXT_PUBLIC_API_BASE_URL: stagingApiBaseUrl,
       OPENAPI_BASE_URL: stagingApiBaseUrl,
+      ...e2eServerOverrides,
     };
 
 const appStartCommand = process.env.CI

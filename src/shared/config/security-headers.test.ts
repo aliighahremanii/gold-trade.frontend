@@ -4,6 +4,7 @@ import {
   buildContentSecurityPolicy,
   buildDevelopmentContentSecurityPolicy,
   buildProductionContentSecurityPolicy,
+  getBaselineSecurityResponseHeaders,
   getSecurityResponseHeaders,
   isProductionSecurityProfile,
 } from "@/shared/config/security-headers";
@@ -39,9 +40,18 @@ describe("security headers", () => {
   it("selects the CSP profile from NODE_ENV", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "https://api.example.com");
+    vi.stubEnv("FRONTEND_SECURITY_PROFILE", "");
 
     expect(isProductionSecurityProfile()).toBe(true);
     expect(buildContentSecurityPolicy()).toBe(buildProductionContentSecurityPolicy());
+  });
+
+  it("allows a development security profile override for local E2E", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("FRONTEND_SECURITY_PROFILE", "development");
+
+    expect(isProductionSecurityProfile()).toBe(false);
+    expect(buildContentSecurityPolicy()).toBe(buildDevelopmentContentSecurityPolicy());
   });
 
   it("returns baseline browser security headers with CSP", () => {
@@ -51,5 +61,12 @@ describe("security headers", () => {
     expect(headerNames).toContain("X-Content-Type-Options");
     expect(headerNames).toContain("Referrer-Policy");
     expect(headerNames).toContain("Permissions-Policy");
+  });
+
+  it("exposes baseline headers without CSP for build-time next.config headers", () => {
+    const headerNames = getBaselineSecurityResponseHeaders().map((header) => header.key);
+
+    expect(headerNames).not.toContain("Content-Security-Policy");
+    expect(headerNames).toContain("X-Frame-Options");
   });
 });

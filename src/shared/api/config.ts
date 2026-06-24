@@ -19,8 +19,16 @@ export type ApiModuleName =
 /** Shared staging API for frontend development and contract sync. */
 const DEFAULT_API_BASE_URL = "https://saba.gold";
 
+function readConfiguredApiBaseUrl(): string | undefined {
+  if (typeof window === "undefined") {
+    return process.env.OPENAPI_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+
+  return process.env.NEXT_PUBLIC_API_BASE_URL;
+}
+
 export function getApiBaseUrl(): string {
-  const configured = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+  const configured = readConfiguredApiBaseUrl()?.trim();
 
   if (!configured) {
     return DEFAULT_API_BASE_URL;

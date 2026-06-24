@@ -36,6 +36,10 @@ function getTrustedConnectSources(): string {
 }
 
 export function isProductionSecurityProfile(): boolean {
+  if (process.env.FRONTEND_SECURITY_PROFILE === "development") {
+    return false;
+  }
+
   return process.env.NODE_ENV === "production";
 }
 
@@ -73,15 +77,17 @@ export function buildContentSecurityPolicy(): string {
     : buildDevelopmentContentSecurityPolicy();
 }
 
+/** Baseline browser headers without CSP (safe to bake via next.config at build time). */
+export function getBaselineSecurityResponseHeaders(): SecurityHeader[] {
+  return [...BASE_SECURITY_HEADERS];
+}
+
 export function getSecurityResponseHeaders(): SecurityHeader[] {
   return [
-    ...BASE_SECURITY_HEADERS,
+    ...getBaselineSecurityResponseHeaders(),
     {
       key: "Content-Security-Policy",
       value: buildContentSecurityPolicy(),
     },
   ];
 }
-
-/** @deprecated Use getSecurityResponseHeaders() for environment-aware CSP. */
-export const SECURITY_RESPONSE_HEADERS = getSecurityResponseHeaders();

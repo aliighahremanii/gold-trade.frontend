@@ -30,6 +30,10 @@ export function getSessionCookieConfig(): SessionCookieConfig {
   };
 }
 
+export function shouldUseSecureSessionCookies(): boolean {
+  return process.env.NODE_ENV === "production" && process.env.FRONTEND_INSECURE_COOKIES !== "true";
+}
+
 export function getSessionToken(
   cookieStore: CookieStoreLike,
   config: SessionCookieConfig = getSessionCookieConfig(),
@@ -93,7 +97,7 @@ export function setSessionCookies(
 ) {
   response.cookies.set(config.sessionCookieName, tokens.accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     expires: new Date(tokens.accessTokenExpiresAt),
@@ -101,7 +105,7 @@ export function setSessionCookies(
 
   response.cookies.set(config.refreshCookieName, tokens.refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     expires: new Date(tokens.refreshTokenExpiresAt),
@@ -109,7 +113,7 @@ export function setSessionCookies(
 
   response.cookies.set(config.deviceIdCookieName, deviceContext.deviceId, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     expires: new Date(tokens.refreshTokenExpiresAt),
@@ -117,7 +121,7 @@ export function setSessionCookies(
 
   response.cookies.set(config.deviceNameCookieName, deviceContext.deviceName, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     expires: new Date(tokens.refreshTokenExpiresAt),
@@ -132,7 +136,7 @@ export function setSessionCookie(
 ) {
   response.cookies.set(config.sessionCookieName, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     expires: expiresAt,
@@ -145,7 +149,7 @@ export function clearSessionCookie(
 ) {
   response.cookies.set(config.sessionCookieName, "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     maxAge: 0,
@@ -160,7 +164,7 @@ export function clearSessionCookies(
 
   response.cookies.set(config.refreshCookieName, "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     maxAge: 0,
@@ -168,7 +172,7 @@ export function clearSessionCookies(
 
   response.cookies.set(config.deviceIdCookieName, "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     maxAge: 0,
@@ -176,7 +180,7 @@ export function clearSessionCookies(
 
   response.cookies.set(config.deviceNameCookieName, "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookies(),
     sameSite: "lax",
     path: "/",
     maxAge: 0,
