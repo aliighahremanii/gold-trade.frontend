@@ -2,7 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   useCancelDeliveryRequest,
@@ -30,6 +30,10 @@ import { useMyWalletAccounts } from "@/modules/wallet/api/use-wallet-accounts";
 import { walletQueryKeys } from "@/modules/wallet/api/query-keys";
 import { createIdempotencyKey } from "@/shared/utils/idempotency";
 import {
+  clearFieldError,
+  type WorkflowFieldErrors,
+} from "@/shared/forms/workflow-field-errors";
+import {
   idempotencyKeyAfterSuccessfulMutation,
   resolveIdempotencyKey,
 } from "@/modules/payments/utils/withdrawal-idempotency";
@@ -40,15 +44,41 @@ export function useRequestDeliveryWorkflow() {
   const idempotencyKeyRef = useRef<string | null>(null);
   const walletInvalidatedRef = useRef(false);
 
-  const [amountGrams, setAmountGrams] = useState("");
-  const [deliveryAddress, setDeliveryAddress] = useState("");
-  const [recipientName, setRecipientName] = useState("");
-  const [recipientPhone, setRecipientPhone] = useState("");
-  const [deliveryZoneId, setDeliveryZoneId] = useState("");
+  const [amountGrams, setAmountGramsState] = useState("");
+  const [deliveryAddress, setDeliveryAddressState] = useState("");
+  const [recipientName, setRecipientNameState] = useState("");
+  const [recipientPhone, setRecipientPhoneState] = useState("");
+  const [deliveryZoneId, setDeliveryZoneIdState] = useState("");
   const [sessionRequestIds, setSessionRequestIds] = useState<string[]>(() => readDeliverySessionIds());
   const [latestRequestId, setLatestRequestId] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [actionError, setActionError] = useState<ReturnType<typeof toNormalizedApiError>>(null);
+  const [fieldErrors, setFieldErrors] = useState<WorkflowFieldErrors>({});
+
+  const setAmountGrams = useCallback((value: string) => {
+    setAmountGramsState(value);
+    setFieldErrors((current) => clearFieldError(current, "amountGrams"));
+  }, []);
+
+  const setDeliveryAddress = useCallback((value: string) => {
+    setDeliveryAddressState(value);
+    setFieldErrors((current) => clearFieldError(current, "deliveryAddress"));
+  }, []);
+
+  const setRecipientName = useCallback((value: string) => {
+    setRecipientNameState(value);
+    setFieldErrors((current) => clearFieldError(current, "recipientName"));
+  }, []);
+
+  const setRecipientPhone = useCallback((value: string) => {
+    setRecipientPhoneState(value);
+    setFieldErrors((current) => clearFieldError(current, "recipientPhone"));
+  }, []);
+
+  const setDeliveryZoneId = useCallback((value: string) => {
+    setDeliveryZoneIdState(value);
+    setFieldErrors((current) => clearFieldError(current, "deliveryZoneId"));
+  }, []);
 
   const walletQuery = useMyWalletAccounts();
   const zonesQuery = useDeliveryZones();
@@ -91,56 +121,35 @@ export function useRequestDeliveryWorkflow() {
   }, [latestRequestQuery.data, queryClient]);
 
   const openConfirmationModal = () => {
+    const nextFieldErrors: WorkflowFieldErrors = {};
+
     if (!isValidGramsInput(amountGrams)) {
-      setActionError({
-        kind: "validation_error",
-        status: 400,
-        message: "Enter a valid gold amount in grams greater than zero.",
-        fieldErrors: [],
-      });
-      return;
+      nextFieldErrors.amountGrams = "Enter a valid gold amount in grams greater than zero.";
     }
 
     if (!deliveryZoneId) {
-      setActionError({
-        kind: "validation_error",
-        status: 400,
-        message: "Select a delivery zone.",
-        fieldErrors: [],
-      });
-      return;
+      nextFieldErrors.deliveryZoneId = "Select a delivery zone.";
     }
 
     if (!deliveryAddress.trim()) {
-      setActionError({
-        kind: "validation_error",
-        status: 400,
-        message: "Enter the delivery address.",
-        fieldErrors: [],
-      });
-      return;
+      nextFieldErrors.deliveryAddress = "Enter the delivery address.";
     }
 
     if (!recipientName.trim()) {
-      setActionError({
-        kind: "validation_error",
-        status: 400,
-        message: "Enter the recipient name.",
-        fieldErrors: [],
-      });
-      return;
+      nextFieldErrors.recipientName = "Enter the recipient name.";
     }
 
     if (!recipientPhone.trim()) {
-      setActionError({
-        kind: "validation_error",
-        status: 400,
-        message: "Enter the recipient phone number.",
-        fieldErrors: [],
-      });
+      nextFieldErrors.recipientPhone = "Enter the recipient phone number.";
+    }
+
+    if (Object.keys(nextFieldErrors).length > 0) {
+      setFieldErrors(nextFieldErrors);
+      setActionError(null);
       return;
     }
 
+    setFieldErrors({});
     setActionError(null);
     setIsConfirmModalOpen(true);
   };
@@ -226,6 +235,7 @@ export function useRequestDeliveryWorkflow() {
     latestRequestView,
     selectedZone,
     actionError,
+    fieldErrors,
     isConfirmModalOpen,
     pendingAmountMg,
     isSubmitting: requestDeliveryMutation.isPending,

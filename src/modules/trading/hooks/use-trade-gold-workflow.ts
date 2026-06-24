@@ -14,12 +14,7 @@ import { toNormalizedApiError } from "@/modules/trading/components/trade-error-a
 import { mapQuoteDetailToSummary } from "@/modules/trading/mappers/map-quote-summary";
 import type { TradeWorkflowPhase } from "@/modules/trading/types/trade-workflow";
 import { createIdempotencyKey } from "@/shared/utils/idempotency";
-import {
-  isManualReviewOrderStatus,
-  isSettlementFailedOrderStatus,
-  isSuccessfulOrderStatus,
-  isTerminalOrderStatus,
-} from "@/modules/trading/utils/order-status";
+import { resolveTradeDisplayPhase } from "@/modules/trading/utils/resolve-trade-display-phase";
 import { isQuoteExpired } from "@/modules/trading/utils/quote-expiry";
 import {
   gramsInputToDisplayAmount,
@@ -58,31 +53,15 @@ export function useTradeGoldWorkflow({ side }: UseTradeGoldWorkflowOptions) {
     [quoteQuery.data],
   );
 
-  const displayPhase = useMemo<TradeWorkflowPhase>(() => {
-    if (phase === "quote_ready" && quoteQuery.data && isQuoteExpired(quoteQuery.data.expires_at)) {
-      return "quote_expired";
-    }
-
-    if (phase === "order_tracking" && orderQuery.data) {
-      if (isSuccessfulOrderStatus(orderQuery.data.status)) {
-        return "completed";
-      }
-
-      if (isSettlementFailedOrderStatus(orderQuery.data.status) || orderQuery.data.status.toLowerCase() === "failed") {
-        return "failed";
-      }
-
-      if (isManualReviewOrderStatus(orderQuery.data.status)) {
-        return "manual_review_required";
-      }
-
-      if (isTerminalOrderStatus(orderQuery.data.status)) {
-        return "unknown";
-      }
-    }
-
-    return phase;
-  }, [orderQuery.data, phase, quoteQuery.data]);
+  const displayPhase = useMemo<TradeWorkflowPhase>(
+    () =>
+      resolveTradeDisplayPhase({
+        phase,
+        quoteExpiresAt: quoteQuery.data?.expires_at,
+        orderStatus: orderQuery.data?.status,
+      }),
+    [orderQuery.data, phase, quoteQuery.data?.expires_at],
+  );
 
   const invalidateWallet = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: walletQueryKeys.myAccounts() });
@@ -137,7 +116,18 @@ export function useTradeGoldWorkflow({ side }: UseTradeGoldWorkflowOptions) {
       });
 
       setQuoteId(quote.id);
-      setPhase(isQuoteExpired(quote.expires_at) ? "quote_expired" : "quote_ready");
+      if (isQuoteExpired(quote.expires_at)) {
+        setPhase("quote_expired");
+        setActionError({
+          kind: "quote_expired",
+          status: 409,
+          message: "This quote has expired. Request a new quote to continue.",
+          fieldErrors: [],
+        });
+      } else {
+        setPhase("quote_ready");
+        setActionError(null);
+      }
     } catch (error) {
       setPhase("idle");
       setActionError(toNormalizedApiError(error));

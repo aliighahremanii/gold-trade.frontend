@@ -11,6 +11,7 @@ import {
   isSettlementPendingOrderStatus,
   isTerminalOrderStatus,
 } from "@/modules/trading/utils/order-status";
+import { resolveTradeDisplayPhase } from "@/modules/trading/utils/resolve-trade-display-phase";
 import { gramsInputToDisplayAmount, isValidGramsInput } from "@/modules/trading/utils/trade-market";
 
 describe("quote expiry", () => {
@@ -35,6 +36,17 @@ describe("order status", () => {
     expect(isSettlementPendingOrderStatus("settlement_pending")).toBe(true);
     expect(isSettlementFailedOrderStatus("settlement_failed")).toBe(true);
     expect(getOrderWorkflowLabel("manual_review_required")).toBe("Manual review required");
+  });
+});
+
+describe("resolveTradeDisplayPhase", () => {
+  it("keeps order_tracking while settlement is pending", () => {
+    expect(
+      resolveTradeDisplayPhase({
+        phase: "order_tracking",
+        orderStatus: "settlement_pending",
+      }),
+    ).toBe("order_tracking");
   });
 });
 

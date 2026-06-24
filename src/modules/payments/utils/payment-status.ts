@@ -98,6 +98,15 @@ export function isFailedWithdrawalStatus(status: string): boolean {
   return normalized === "failed" || normalized === "rejected" || normalized.includes("failed");
 }
 
+export function isCancelledWithdrawalStatus(status: string): boolean {
+  const normalized = normalizePaymentStatus(status);
+  return normalized === "cancelled" || normalized === "canceled";
+}
+
+export function isRejectedWithdrawalStatus(status: string): boolean {
+  return normalizePaymentStatus(status) === "rejected";
+}
+
 export function isCancellableWithdrawalStatus(status: string): boolean {
   return CANCELLABLE_WITHDRAWAL_STATUSES.has(normalizePaymentStatus(status));
 }

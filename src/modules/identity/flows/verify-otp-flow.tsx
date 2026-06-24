@@ -276,6 +276,12 @@ export function VerifyOtpFlow({ channel, purpose, nextPath }: VerifyOtpFlowProps
     }
   }
 
+  const handleSendCodeRef = useRef(handleSendCode);
+
+  useEffect(() => {
+    handleSendCodeRef.current = handleSendCode;
+  });
+
   useEffect(() => {
     if (!currentUserQuery.data || challengeId) {
       return;
@@ -295,10 +301,8 @@ export function VerifyOtpFlow({ channel, purpose, nextPath }: VerifyOtpFlowProps
       return;
     }
 
-    // Auto-send should only run once when the session becomes available.
-    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps -- intentional one-shot send
-    void handleSendCode();
-  }, [challengeId, currentUserQuery.data, resolvedChannel, resolvedPurpose]);
+    void handleSendCodeRef.current();
+  }, [challengeId, currentUserQuery.data, destinationPath, resolvedChannel, resolvedPurpose]);
 
   async function handleVerify(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

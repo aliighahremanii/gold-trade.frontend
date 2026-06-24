@@ -187,18 +187,20 @@ function marketStatus() {
 
 function createQuote(body, user) {
   const quoteId = `quote-${Date.now()}`;
+  const displayAmount = body.display_amount ?? 1000;
+  const isExpiredFixture = displayAmount === 7777;
   const quote = {
     id: quoteId,
     user_id: user.userId,
     market_symbol: body.market_symbol ?? "XAU-IRR",
     side: body.side ?? "buy",
-    status: "pending",
+    status: isExpiredFixture ? "expired" : "pending",
     base_asset_code: "XAU",
     base_unit_code: "mg",
     quote_asset_code: "IRR",
     display_unit: body.display_unit ?? "g",
-    display_amount: body.display_amount ?? 1000,
-    base_amount: (body.display_amount ?? 1000) * 1000,
+    display_amount: displayAmount,
+    base_amount: displayAmount * 1000,
     unit_price: 5_000_000,
     gross_quote_amount: 5_000_000,
     fee_amount: 50_000,
@@ -207,7 +209,7 @@ function createQuote(body, user) {
     price_snapshot_id: "price-snapshot-1",
     quote_per_base_unit: "g",
     created_at: nowIso(),
-    expires_at: futureIso(120),
+    expires_at: isExpiredFixture ? "2020-01-01T00:00:00.000Z" : futureIso(120),
   };
 
   state.set(`quote:${quoteId}`, quote);
@@ -269,6 +271,15 @@ function getOrder(orderId) {
 }
 
 function createDeposit(body, user) {
+  const idempotencyKey = body.idempotency_key ?? `dep-key-${Date.now()}`;
+
+  if (state.has(`deposit-idem:${idempotencyKey}`)) {
+    return {
+      duplicate: true,
+      resourceId: state.get(`deposit-idem:${idempotencyKey}`),
+    };
+  }
+
   const depositId = `deposit-${Date.now()}`;
   const deposit = {
     id: depositId,
@@ -276,12 +287,13 @@ function createDeposit(body, user) {
     amount: body.amount,
     status: "awaiting_confirmation",
     gateway_provider: "mock",
-    idempotency_key: body.idempotency_key ?? `dep-key-${depositId}`,
+    idempotency_key: idempotencyKey,
     created_at: nowIso(),
     updated_at: nowIso(),
   };
 
   state.set(`deposit:${depositId}`, deposit);
+  state.set(`deposit-idem:${idempotencyKey}`, depositId);
   return deposit;
 }
 
@@ -667,7 +679,13 @@ async function handleRequest(request) {
       const auth = requireUser(request);
       if (auth.error) return auth.error;
       const body = await request.json();
-      return json(createDeposit(body, auth.user), 201);
+      const created = createDeposit(body, auth.user);
+
+      if (created.duplicate) {
+        return problem(409, "A request with this idempotency key already exists.", "conflict");
+      }
+
+      return json(created, 201);
     }
 
     if (method === "GET" && segments[0] === "payments" && segments[1] === "deposits" && segments.length === 3) {

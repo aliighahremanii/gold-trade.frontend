@@ -3,9 +3,11 @@ import Link from "next/link";
 import type { DeliveryRequestStatusView } from "@/modules/delivery/mappers/map-delivery-request";
 import {
   isCancellableDeliveryStatus,
+  isCancelledDeliveryStatus,
   isFailedDeliveryStatus,
   isManualReviewDeliveryStatus,
   isPendingDeliveryStatus,
+  isRejectedDeliveryStatus,
   isSuccessfulDeliveryStatus,
 } from "@/modules/delivery/utils/delivery-status";
 
@@ -28,6 +30,9 @@ export function DeliveryStatusPanel({
 }: DeliveryStatusPanelProps) {
   const isSuccess = isSuccessfulDeliveryStatus(request.status);
   const isFailed = isFailedDeliveryStatus(request.status);
+  const isRejected = isRejectedDeliveryStatus(request.status);
+  const isCancelled = isCancelledDeliveryStatus(request.status);
+  const isTerminalFailure = isFailed || isRejected;
   const isPending = isPendingDeliveryStatus(request.status);
   const isManualReview = isManualReviewDeliveryStatus(request.status);
   const canCancel = Boolean(onCancel) && isCancellableDeliveryStatus(request.status);
@@ -45,7 +50,7 @@ export function DeliveryStatusPanel({
           className={
             isSuccess
               ? "rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100"
-              : isFailed
+              : isTerminalFailure || isCancelled
                 ? "rounded-full border border-red-300 bg-red-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-100"
                 : isManualReview
                   ? "rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-100"
@@ -144,6 +149,27 @@ export function DeliveryStatusPanel({
       {isSuccess ? (
         <p className="text-sm text-emerald-700 dark:text-emerald-300" role="status">
           Backend marked the delivery completed. Wallet balances were refreshed from the server.
+        </p>
+      ) : null}
+
+      {isCancelled ? (
+        <p className="text-sm text-red-700 dark:text-red-300" role="alert">
+          This delivery request was cancelled. Locked gold is released only after the backend confirms
+          cancellation.
+        </p>
+      ) : null}
+
+      {isRejected ? (
+        <p className="text-sm text-red-700 dark:text-red-300" role="alert">
+          This delivery request was rejected during review. Check the failure reason and submit a new
+          request when ready.
+        </p>
+      ) : null}
+
+      {isFailed ? (
+        <p className="text-sm text-red-700 dark:text-red-300" role="alert">
+          This delivery failed on the backend. Wallet balances remain backend-owned until the request
+          reaches a terminal state.
         </p>
       ) : null}
 

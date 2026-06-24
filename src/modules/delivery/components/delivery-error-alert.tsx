@@ -10,6 +10,10 @@ function getGuidance(error: NormalizedApiError): string | null {
       return "Reduce the delivery amount or wait for pending wallet operations to complete.";
     case "manual_review_required":
       return "This delivery request requires manual review before scheduling.";
+    case "provider_unavailable":
+      return "Delivery scheduling is temporarily unavailable. Try again later.";
+    case "conflict":
+      return "This delivery request was already submitted. Check request status instead of resubmitting.";
     default:
       return null;
   }
@@ -23,7 +27,8 @@ export function DeliveryErrorAlert({ error }: DeliveryErrorAlertProps) {
   const guidance = getGuidance(error);
   const isWarning =
     error.kind === "manual_review_required" ||
-    error.kind === "rate_limited";
+    error.kind === "rate_limited" ||
+    error.kind === "conflict";
 
   return (
     <div

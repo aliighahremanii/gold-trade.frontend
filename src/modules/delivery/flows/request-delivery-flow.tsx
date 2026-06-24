@@ -33,6 +33,7 @@ export function RequestDeliveryFlow() {
           recipientName={workflow.recipientName}
           recipientPhone={workflow.recipientPhone}
           deliveryZoneId={workflow.deliveryZoneId}
+          fieldErrors={workflow.fieldErrors}
           zones={workflow.zones}
           zonesLoading={workflow.zonesLoading}
           zonesError={workflow.zonesError}

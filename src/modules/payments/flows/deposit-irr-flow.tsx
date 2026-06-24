@@ -25,6 +25,7 @@ export function DepositIrrFlow({ initialDepositId = null }: DepositIrrFlowProps)
         {workflow.displayPhase === "idle" || workflow.displayPhase === "creating" ? (
           <DepositAmountForm
             amount={workflow.amountInput}
+            fieldErrors={workflow.fieldErrors}
             isSubmitting={workflow.isSubmitting}
             onAmountChange={workflow.setAmountInput}
             onSubmit={() => {

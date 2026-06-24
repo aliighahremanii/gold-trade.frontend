@@ -60,7 +60,16 @@ export function isManualReviewDeliveryStatus(status: string): boolean {
 
 export function isFailedDeliveryStatus(status: string): boolean {
   const normalized = normalizeDeliveryStatus(status);
-  return normalized === "failed" || normalized === "rejected" || normalized.includes("failed");
+  return normalized === "failed" || normalized.includes("failed");
+}
+
+export function isCancelledDeliveryStatus(status: string): boolean {
+  const normalized = normalizeDeliveryStatus(status);
+  return normalized === "cancelled" || normalized === "canceled";
+}
+
+export function isRejectedDeliveryStatus(status: string): boolean {
+  return normalizeDeliveryStatus(status) === "rejected";
 }
 
 export function isCancellableDeliveryStatus(status: string): boolean {

@@ -16,6 +16,8 @@ function getGuidance(error: NormalizedApiError): string | null {
       return "The payment failed. You can start a new deposit when ready.";
     case "provider_unavailable":
       return "The payment provider is unavailable. Try again later.";
+    case "conflict":
+      return "This payment request was already submitted. Check the payment status instead of resubmitting.";
     default:
       return null;
   }
@@ -30,7 +32,8 @@ export function PaymentErrorAlert({ error }: PaymentErrorAlertProps) {
   const isWarning =
     error.kind === "manual_review_required" ||
     error.kind === "payment_pending" ||
-    error.kind === "rate_limited";
+    error.kind === "rate_limited" ||
+    error.kind === "conflict";
 
   return (
     <div

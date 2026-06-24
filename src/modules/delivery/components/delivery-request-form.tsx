@@ -1,4 +1,5 @@
 import type { ZoneDetail } from "@/modules/delivery/api/use-delivery-zones";
+import { AuthFormField } from "@/modules/identity/components/auth-form-field";
 import { mapZoneToLabel } from "@/modules/delivery/mappers/map-delivery-request";
 
 type DeliveryRequestFormProps = {
@@ -11,6 +12,13 @@ type DeliveryRequestFormProps = {
   zonesLoading: boolean;
   zonesError: boolean;
   isSubmitting: boolean;
+  fieldErrors?: {
+    amountGrams?: string;
+    deliveryZoneId?: string;
+    deliveryAddress?: string;
+    recipientName?: string;
+    recipientPhone?: string;
+  };
   onAmountGramsChange: (value: string) => void;
   onDeliveryAddressChange: (value: string) => void;
   onRecipientNameChange: (value: string) => void;
@@ -29,6 +37,7 @@ export function DeliveryRequestForm({
   zonesLoading,
   zonesError,
   isSubmitting,
+  fieldErrors,
   onAmountGramsChange,
   onDeliveryAddressChange,
   onRecipientNameChange,
@@ -45,39 +54,36 @@ export function DeliveryRequestForm({
         event.preventDefault();
         onSubmit();
       }}
+      noValidate
     >
-      <div className="flex flex-col gap-2">
-        <label htmlFor="delivery-amount" className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-          Gold amount (grams)
-        </label>
-        <input
-          id="delivery-amount"
-          name="amountGrams"
-          type="text"
-          inputMode="decimal"
-          autoComplete="off"
-          value={amountGrams}
-          disabled={isSubmitting}
-          onChange={(event) => onAmountGramsChange(event.target.value)}
-          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-          placeholder="e.g. 5"
-        />
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Amount is sent to the backend in milligrams. Final eligibility is validated server-side.
-        </p>
-      </div>
+      <AuthFormField
+        id="delivery-amount"
+        name="amountGrams"
+        label="Gold amount (grams)"
+        type="text"
+        inputMode="decimal"
+        autoComplete="off"
+        value={amountGrams}
+        disabled={isSubmitting}
+        placeholder="e.g. 5"
+        error={fieldErrors?.amountGrams}
+        aria-invalid={fieldErrors?.amountGrams ? true : undefined}
+        onChange={(event) => onAmountGramsChange(event.target.value)}
+      />
+      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        Amount is sent to the backend in milligrams. Final eligibility is validated server-side.
+      </p>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="delivery-zone" className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-          Delivery zone
-        </label>
+      <label htmlFor="delivery-zone" className="flex flex-col gap-1.5 text-sm">
+        <span className="font-medium text-zinc-800 dark:text-zinc-200">Delivery zone</span>
         <select
           id="delivery-zone"
           name="deliveryZoneId"
           value={deliveryZoneId}
           disabled={isSubmitting || zonesLoading || activeZones.length === 0}
+          aria-invalid={fieldErrors?.deliveryZoneId ? true : undefined}
           onChange={(event) => onDeliveryZoneIdChange(event.target.value)}
-          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none ring-zinc-400 focus:ring-2 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
         >
           <option value="">
             {zonesLoading ? "Loading zones..." : zonesError ? "Unable to load zones" : "Select a zone"}
@@ -88,56 +94,55 @@ export function DeliveryRequestForm({
             </option>
           ))}
         </select>
-      </div>
+        {fieldErrors?.deliveryZoneId ? (
+          <span className="text-red-700 dark:text-red-300">{fieldErrors.deliveryZoneId}</span>
+        ) : null}
+      </label>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="delivery-address" className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-          Delivery address
-        </label>
+      <label htmlFor="delivery-address" className="flex flex-col gap-1.5 text-sm">
+        <span className="font-medium text-zinc-800 dark:text-zinc-200">Delivery address</span>
         <textarea
           id="delivery-address"
           name="deliveryAddress"
           rows={3}
           value={deliveryAddress}
           disabled={isSubmitting}
+          aria-invalid={fieldErrors?.deliveryAddress ? true : undefined}
           onChange={(event) => onDeliveryAddressChange(event.target.value)}
-          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none ring-zinc-400 focus:ring-2 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
           placeholder="Street, building, and delivery instructions"
         />
-      </div>
+        {fieldErrors?.deliveryAddress ? (
+          <span className="text-red-700 dark:text-red-300">{fieldErrors.deliveryAddress}</span>
+        ) : null}
+      </label>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="recipient-name" className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-            Recipient name
-          </label>
-          <input
-            id="recipient-name"
-            name="recipientName"
-            type="text"
-            autoComplete="name"
-            value={recipientName}
-            disabled={isSubmitting}
-            onChange={(event) => onRecipientNameChange(event.target.value)}
-            className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-          />
-        </div>
+        <AuthFormField
+          id="recipient-name"
+          name="recipientName"
+          label="Recipient name"
+          type="text"
+          autoComplete="name"
+          value={recipientName}
+          disabled={isSubmitting}
+          error={fieldErrors?.recipientName}
+          aria-invalid={fieldErrors?.recipientName ? true : undefined}
+          onChange={(event) => onRecipientNameChange(event.target.value)}
+        />
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="recipient-phone" className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-            Recipient phone
-          </label>
-          <input
-            id="recipient-phone"
-            name="recipientPhone"
-            type="tel"
-            autoComplete="tel"
-            value={recipientPhone}
-            disabled={isSubmitting}
-            onChange={(event) => onRecipientPhoneChange(event.target.value)}
-            className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-          />
-        </div>
+        <AuthFormField
+          id="recipient-phone"
+          name="recipientPhone"
+          label="Recipient phone"
+          type="tel"
+          autoComplete="tel"
+          value={recipientPhone}
+          disabled={isSubmitting}
+          error={fieldErrors?.recipientPhone}
+          aria-invalid={fieldErrors?.recipientPhone ? true : undefined}
+          onChange={(event) => onRecipientPhoneChange(event.target.value)}
+        />
       </div>
 
       <button

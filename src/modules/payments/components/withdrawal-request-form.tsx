@@ -1,7 +1,13 @@
+import { AuthFormField } from "@/modules/identity/components/auth-form-field";
+
 type WithdrawalRequestFormProps = {
   amount: string;
   bankAccountReference: string;
   isSubmitting: boolean;
+  fieldErrors?: {
+    amount?: string;
+    bankAccountReference?: string;
+  };
   onAmountChange: (value: string) => void;
   onBankAccountReferenceChange: (value: string) => void;
   onSubmit: () => void;
@@ -11,6 +17,7 @@ export function WithdrawalRequestForm({
   amount,
   bankAccountReference,
   isSubmitting,
+  fieldErrors,
   onAmountChange,
   onBankAccountReferenceChange,
   onSubmit,
@@ -22,48 +29,40 @@ export function WithdrawalRequestForm({
         event.preventDefault();
         onSubmit();
       }}
+      noValidate
     >
-      <div className="flex flex-col gap-2">
-        <label htmlFor="withdraw-amount" className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-          Withdrawal amount (IRR)
-        </label>
-        <input
-          id="withdraw-amount"
-          name="amount"
-          type="text"
-          inputMode="numeric"
-          autoComplete="off"
-          value={amount}
-          disabled={isSubmitting}
-          onChange={(event) => onAmountChange(event.target.value)}
-          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-          placeholder="e.g. 2000000"
-        />
-      </div>
+      <AuthFormField
+        id="withdraw-amount"
+        name="amount"
+        label="Withdrawal amount (IRR)"
+        type="text"
+        inputMode="numeric"
+        autoComplete="off"
+        value={amount}
+        disabled={isSubmitting}
+        placeholder="e.g. 2000000"
+        error={fieldErrors?.amount}
+        aria-invalid={fieldErrors?.amount ? true : undefined}
+        onChange={(event) => onAmountChange(event.target.value)}
+      />
 
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="bank-account-reference"
-          className="text-sm font-medium text-zinc-900 dark:text-zinc-50"
-        >
-          Bank account reference
-        </label>
-        <input
-          id="bank-account-reference"
-          name="bankAccountReference"
-          type="text"
-          autoComplete="off"
-          value={bankAccountReference}
-          disabled={isSubmitting}
-          onChange={(event) => onBankAccountReferenceChange(event.target.value)}
-          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-          placeholder="Saved payout account reference"
-        />
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          The backend locks wallet balance when the withdrawal is created. Payout status updates from payment
-          APIs.
-        </p>
-      </div>
+      <AuthFormField
+        id="bank-account-reference"
+        name="bankAccountReference"
+        label="Bank account reference"
+        type="text"
+        autoComplete="off"
+        value={bankAccountReference}
+        disabled={isSubmitting}
+        placeholder="Saved payout account reference"
+        error={fieldErrors?.bankAccountReference}
+        aria-invalid={fieldErrors?.bankAccountReference ? true : undefined}
+        onChange={(event) => onBankAccountReferenceChange(event.target.value)}
+      />
+      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        The backend locks wallet balance when the withdrawal is created. Payout status updates from payment
+        APIs.
+      </p>
 
       <button
         type="submit"

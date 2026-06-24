@@ -2,7 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   useCancelWithdrawal,
@@ -23,6 +23,10 @@ import {
 } from "@/modules/payments/utils/withdrawal-session";
 import { walletQueryKeys } from "@/modules/wallet/api/query-keys";
 import { createIdempotencyKey } from "@/shared/utils/idempotency";
+import {
+  clearFieldError,
+  type WorkflowFieldErrors,
+} from "@/shared/forms/workflow-field-errors";
 
 export function useWithdrawIrrWorkflow() {
   const router = useRouter();
@@ -30,14 +34,25 @@ export function useWithdrawIrrWorkflow() {
   const idempotencyKeyRef = useRef<string | null>(null);
   const walletInvalidatedRef = useRef(false);
 
-  const [amountInput, setAmountInput] = useState("");
-  const [bankAccountReference, setBankAccountReference] = useState("");
+  const [amountInput, setAmountInputState] = useState("");
+  const [bankAccountReference, setBankAccountReferenceState] = useState("");
   const [sessionWithdrawalIds, setSessionWithdrawalIds] = useState<string[]>(() =>
     readWithdrawalSessionIds(),
   );
   const [latestWithdrawalId, setLatestWithdrawalId] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [actionError, setActionError] = useState<ReturnType<typeof toNormalizedApiError>>(null);
+  const [fieldErrors, setFieldErrors] = useState<WorkflowFieldErrors>({});
+
+  const setAmountInput = useCallback((value: string) => {
+    setAmountInputState(value);
+    setFieldErrors((current) => clearFieldError(current, "amount"));
+  }, []);
+
+  const setBankAccountReference = useCallback((value: string) => {
+    setBankAccountReferenceState(value);
+    setFieldErrors((current) => clearFieldError(current, "bankAccountReference"));
+  }, []);
 
   const requestWithdrawalMutation = useRequestWithdrawal();
   const latestWithdrawalQuery = useWithdrawal(latestWithdrawalId, Boolean(latestWithdrawalId));
@@ -69,26 +84,23 @@ export function useWithdrawIrrWorkflow() {
   }, [latestWithdrawalQuery.data, queryClient]);
 
   const openConfirmationModal = () => {
+    const nextFieldErrors: WorkflowFieldErrors = {};
+
     if (!isValidIrrAmountInput(amountInput)) {
-      setActionError({
-        kind: "validation_error",
-        status: 400,
-        message: "Enter a valid IRR amount in whole rials.",
-        fieldErrors: [],
-      });
-      return;
+      nextFieldErrors.amount = "Enter a valid IRR amount in whole rials.";
     }
 
     if (!bankAccountReference.trim()) {
-      setActionError({
-        kind: "validation_error",
-        status: 400,
-        message: "Enter the bank account reference for payout.",
-        fieldErrors: [],
-      });
+      nextFieldErrors.bankAccountReference = "Enter the bank account reference for payout.";
+    }
+
+    if (Object.keys(nextFieldErrors).length > 0) {
+      setFieldErrors(nextFieldErrors);
+      setActionError(null);
       return;
     }
 
+    setFieldErrors({});
     setActionError(null);
     setIsConfirmModalOpen(true);
   };
@@ -148,6 +160,7 @@ export function useWithdrawIrrWorkflow() {
     setAmountInput,
     bankAccountReference,
     setBankAccountReference,
+    fieldErrors,
     sessionWithdrawalIds,
     latestWithdrawalView,
     actionError,

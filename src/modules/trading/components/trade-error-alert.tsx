@@ -16,6 +16,8 @@ function getGuidance(error: NormalizedApiError): string | null {
       return "The execution provider is unavailable. Try again later.";
     case "settlement_failed":
       return "Settlement did not complete. Support may need to review this order.";
+    case "conflict":
+      return "This request was already submitted. Check order status instead of resubmitting.";
     default:
       return null;
   }
@@ -27,7 +29,10 @@ export function TradeErrorAlert({ error }: TradeErrorAlertProps) {
   }
 
   const guidance = getGuidance(error);
-  const isWarning = error.kind === "manual_review_required" || error.kind === "rate_limited";
+  const isWarning =
+    error.kind === "manual_review_required" ||
+    error.kind === "rate_limited" ||
+    error.kind === "conflict";
 
   return (
     <div

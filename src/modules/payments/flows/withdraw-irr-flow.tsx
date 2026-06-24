@@ -23,6 +23,7 @@ export function WithdrawIrrFlow() {
         <WithdrawalRequestForm
           amount={workflow.amountInput}
           bankAccountReference={workflow.bankAccountReference}
+          fieldErrors={workflow.fieldErrors}
           isSubmitting={workflow.isSubmitting}
           onAmountChange={workflow.setAmountInput}
           onBankAccountReferenceChange={workflow.setBankAccountReference}

@@ -3,9 +3,11 @@ import Link from "next/link";
 import type { WithdrawalStatusView } from "@/modules/payments/mappers/map-withdrawal-detail";
 import {
   isCancellableWithdrawalStatus,
+  isCancelledWithdrawalStatus,
   isFailedWithdrawalStatus,
   isManualReviewWithdrawalStatus,
   isPendingWithdrawalStatus,
+  isRejectedWithdrawalStatus,
   isSuccessfulWithdrawalStatus,
 } from "@/modules/payments/utils/payment-status";
 
@@ -26,6 +28,9 @@ export function WithdrawalStatusPanel({
 }: WithdrawalStatusPanelProps) {
   const isSuccess = isSuccessfulWithdrawalStatus(withdrawal.status);
   const isFailed = isFailedWithdrawalStatus(withdrawal.status);
+  const isRejected = isRejectedWithdrawalStatus(withdrawal.status);
+  const isCancelled = isCancelledWithdrawalStatus(withdrawal.status);
+  const isTerminalFailure = isFailed || isRejected;
   const isPending = isPendingWithdrawalStatus(withdrawal.status);
   const isManualReview = isManualReviewWithdrawalStatus(withdrawal.status);
   const canCancel = Boolean(onCancel) && isCancellableWithdrawalStatus(withdrawal.status);
@@ -41,7 +46,7 @@ export function WithdrawalStatusPanel({
           className={
             isSuccess
               ? "rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100"
-              : isFailed
+              : isTerminalFailure || isCancelled
                 ? "rounded-full border border-red-300 bg-red-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-100"
                 : isManualReview
                   ? "rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-100"
@@ -112,6 +117,26 @@ export function WithdrawalStatusPanel({
       {isSuccess ? (
         <p className="text-sm text-emerald-700 dark:text-emerald-300" role="status">
           Backend marked the withdrawal completed. Wallet balances were refreshed from the server.
+        </p>
+      ) : null}
+
+      {isCancelled ? (
+        <p className="text-sm text-red-700 dark:text-red-300" role="alert">
+          This withdrawal was cancelled. Locked IRR is released only after the backend confirms
+          cancellation.
+        </p>
+      ) : null}
+
+      {isRejected ? (
+        <p className="text-sm text-red-700 dark:text-red-300" role="alert">
+          This withdrawal was rejected during review. Check the failure reason and submit a new request
+          when ready.
+        </p>
+      ) : null}
+
+      {isFailed && !isRejected ? (
+        <p className="text-sm text-red-700 dark:text-red-300" role="alert">
+          This withdrawal failed on the backend. You can submit a new withdrawal when ready.
         </p>
       ) : null}
 

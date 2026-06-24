@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useDeposit, useRequestDeposit } from "@/modules/payments/api/use-deposits";
 import { toNormalizedApiError } from "@/modules/payments/components/payment-error-alert";
@@ -10,6 +10,10 @@ import { resolveDepositDisplayPhase } from "@/modules/payments/utils/deposit-wor
 import { isValidIrrAmountInput, parseIrrAmountInput } from "@/modules/payments/utils/format-irr-amount";
 import { walletQueryKeys } from "@/modules/wallet/api/query-keys";
 import { createIdempotencyKey } from "@/shared/utils/idempotency";
+import {
+  clearFieldError,
+  type WorkflowFieldErrors,
+} from "@/shared/forms/workflow-field-errors";
 
 type UseDepositIrrWorkflowOptions = {
   initialDepositId?: string | null;
@@ -20,9 +24,15 @@ export function useDepositIrrWorkflow({ initialDepositId = null }: UseDepositIrr
   const idempotencyKeyRef = useRef<string | null>(null);
   const walletInvalidatedRef = useRef(false);
 
-  const [amountInput, setAmountInput] = useState("");
+  const [amountInput, setAmountInputState] = useState("");
   const [depositId, setDepositId] = useState<string | null>(initialDepositId);
   const [actionError, setActionError] = useState<ReturnType<typeof toNormalizedApiError>>(null);
+  const [fieldErrors, setFieldErrors] = useState<WorkflowFieldErrors>({});
+
+  const setAmountInput = useCallback((value: string) => {
+    setAmountInputState(value);
+    setFieldErrors((current) => clearFieldError(current, "amount"));
+  }, []);
 
   const requestDepositMutation = useRequestDeposit();
   const depositQuery = useDeposit(depositId, Boolean(depositId));
@@ -62,15 +72,12 @@ export function useDepositIrrWorkflow({ initialDepositId = null }: UseDepositIrr
 
   const startDeposit = async () => {
     if (!isValidIrrAmountInput(amountInput)) {
-      setActionError({
-        kind: "validation_error",
-        status: 400,
-        message: "Enter a valid IRR amount in whole rials.",
-        fieldErrors: [],
-      });
+      setFieldErrors({ amount: "Enter a valid IRR amount in whole rials." });
+      setActionError(null);
       return;
     }
 
+    setFieldErrors({});
     setActionError(null);
 
     if (!idempotencyKeyRef.current) {
@@ -90,9 +97,10 @@ export function useDepositIrrWorkflow({ initialDepositId = null }: UseDepositIrr
   };
 
   const resetWorkflow = () => {
-    setAmountInput("");
+    setAmountInputState("");
     setDepositId(null);
     setActionError(null);
+    setFieldErrors({});
     idempotencyKeyRef.current = null;
     requestDepositMutation.reset();
   };
@@ -100,6 +108,7 @@ export function useDepositIrrWorkflow({ initialDepositId = null }: UseDepositIrr
   return {
     amountInput,
     setAmountInput,
+    fieldErrors,
     depositView,
     depositId,
     actionError,

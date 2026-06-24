@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { DepositAmountForm } from "@/modules/payments/components/deposit-amount-form";
 import { DepositStatusPanel } from "@/modules/payments/components/deposit-status-panel";
 import { PaymentErrorAlert, toNormalizedApiError } from "@/modules/payments/components/payment-error-alert";
 import type { DepositStatusView } from "@/modules/payments/mappers/map-deposit-detail";
@@ -50,6 +51,20 @@ describe("toNormalizedApiError", () => {
         fieldErrors: [],
       })?.message,
     ).toBe("Payment failed.");
+  });
+});
+
+describe("DepositAmountForm", () => {
+  it("renders field-level amount validation", () => {
+    const element = DepositAmountForm({
+      amount: "",
+      isSubmitting: false,
+      fieldErrors: { amount: "Enter a valid IRR amount in whole rials." },
+      onAmountChange: () => undefined,
+      onSubmit: () => undefined,
+    });
+
+    expect(JSON.stringify(element)).toContain("Enter a valid IRR amount in whole rials.");
   });
 });
 
