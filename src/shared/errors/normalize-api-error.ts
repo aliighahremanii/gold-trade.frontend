@@ -5,6 +5,7 @@ import {
   type NormalizedProblemFieldError,
   type ProblemResponse,
 } from "./api-error";
+import { readOperationReference } from "@/shared/observability/correlation-id";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -71,6 +72,7 @@ export function normalizeApiError(input: {
   status: number;
   body?: ProblemResponse | unknown;
   fallbackMessage?: string;
+  responseHeaders?: Headers;
 }): NormalizedApiError {
   const problem = asProblemResponse(input.body);
   const message = problem?.message ?? input.fallbackMessage ?? "Unexpected API error.";
@@ -81,6 +83,9 @@ export function normalizeApiError(input: {
     code: problem?.code,
     message,
     fieldErrors: problem?.errors ?? [],
+    operationReference: input.responseHeaders
+      ? readOperationReference(input.responseHeaders)
+      : undefined,
     raw: input.body,
   };
 }

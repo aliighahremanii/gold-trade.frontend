@@ -1,4 +1,5 @@
 import { normalizeApiError, type ProblemResponse } from "@/shared/errors";
+import { reportApiError } from "@/shared/observability/report-api-error";
 
 type ApiClientResult<TData, TProblem extends ProblemResponse> = {
   data?: TData;
@@ -14,11 +15,16 @@ export function unwrapApiResponse<TData, TProblem extends ProblemResponse>(
     return result.data;
   }
 
-  throw normalizeApiError({
+  const error = normalizeApiError({
     status: result.response.status,
     body: result.error,
     fallbackMessage,
+    responseHeaders: result.response.headers,
   });
+
+  reportApiError(error, { scope: "api.read" });
+
+  throw error;
 }
 
 export function unwrapApiMutation<TData, TProblem extends ProblemResponse>(
@@ -33,9 +39,14 @@ export function unwrapApiMutation<TData, TProblem extends ProblemResponse>(
     return;
   }
 
-  throw normalizeApiError({
+  const error = normalizeApiError({
     status: result.response.status,
     body: result.error,
     fallbackMessage,
+    responseHeaders: result.response.headers,
   });
+
+  reportApiError(error, { scope: "api.mutation" });
+
+  throw error;
 }

@@ -1,4 +1,5 @@
 import type { NormalizedApiError } from "@/shared/errors/api-error";
+import { OperationReference } from "@/shared/ui/operation-reference";
 
 type ApiErrorAlertProps = {
   error: NormalizedApiError | null;
@@ -21,6 +22,7 @@ export function ApiErrorAlert({ error }: ApiErrorAlertProps) {
       role="alert"
     >
       <p>{error.message}</p>
+      <OperationReference reference={error.operationReference} />
     </div>
   );
 }

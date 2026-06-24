@@ -43,4 +43,12 @@ Choose one and document it:
 - Self-hosted Next.js standalone Docker image behind Caddy
 - Static export only if the app has no server-runtime requirements
 
-For this financial platform, self-hosted Docker behind Caddy is often a good fit if the backend stack is already self-hosted.
+For this financial platform, self-hosted Next.js standalone Docker behind Caddy is often a good fit if the backend stack is already self-hosted.
+
+## Production security notes
+
+- Apply TLS at the reverse proxy and enable `Strict-Transport-Security` for HTTPS-only deployments.
+- Keep session, refresh, and device cookies `HttpOnly` and `Secure` in production.
+- Restrict admin routes with server-side `requireAdminSession`; UI hiding is not authorization.
+- Review `docs/security-and-financial-safety.md` before changing env vars, proxy behavior, or response headers.
+- Baseline browser security headers ship from `next.config.ts`; production CSP omits `unsafe-inline`/`unsafe-eval` and limits `connect-src` to `'self'` plus `NEXT_PUBLIC_API_BASE_URL`.

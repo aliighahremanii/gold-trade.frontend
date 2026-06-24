@@ -41,6 +41,7 @@ export type NormalizedApiError = {
   code?: string;
   message: string;
   fieldErrors: NormalizedProblemFieldError[];
+  operationReference?: string;
   raw?: unknown;
 };
 

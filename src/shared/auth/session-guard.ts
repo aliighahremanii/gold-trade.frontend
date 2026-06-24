@@ -95,6 +95,35 @@ export function buildAccessDeniedRedirect(
   return `/access-denied?${params.toString()}`;
 }
 
+export type AdminAccessDecision =
+  | { type: "allow" }
+  | { type: "sign_in"; redirectTo: string }
+  | { type: "access_denied"; redirectTo: string };
+
+export function evaluateAdminAccess(input: {
+  currentUser: Pick<CurrentUserResponse, "roles"> | null;
+  destination: string;
+  config?: SessionGuardConfig;
+}): AdminAccessDecision {
+  const config = input.config ?? getSessionGuardConfig();
+
+  if (!input.currentUser) {
+    return {
+      type: "sign_in",
+      redirectTo: buildSignInRedirect(input.destination, "auth_required", config),
+    };
+  }
+
+  if (!userHasAdminRole(input.currentUser, config)) {
+    return {
+      type: "access_denied",
+      redirectTo: buildAccessDeniedRedirect(input.destination),
+    };
+  }
+
+  return { type: "allow" };
+}
+
 async function validateCurrentUser(cookieStore: CookieStoreLike) {
   if (!hasAuthenticatedSession(cookieStore)) {
     return null;
@@ -165,14 +194,15 @@ export async function requireAdminSession(fallbackPath = "/admin/dashboard") {
   const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);
   const destination = getRequestedDestination(headerStore, fallbackPath);
   const currentUser = await validateCurrentUser(cookieStore);
+  const decision = evaluateAdminAccess({ currentUser, destination });
 
-  if (!currentUser) {
-    redirect(buildSignInRedirect(destination));
+  if (decision.type === "sign_in") {
+    redirect(decision.redirectTo);
   }
 
-  if (!userHasAdminRole(currentUser)) {
-    redirect(buildAccessDeniedRedirect(destination));
+  if (decision.type === "access_denied") {
+    redirect(decision.redirectTo);
   }
 
-  return currentUser;
+  return currentUser!;
 }

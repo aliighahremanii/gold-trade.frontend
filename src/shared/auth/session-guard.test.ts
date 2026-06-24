@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildAccessDeniedRedirect,
   buildSignInRedirect,
+  evaluateAdminAccess,
   getRequestedDestination,
   hasAuthenticatedSession,
   type CookieStoreLike,
@@ -90,5 +91,31 @@ describe("session guard", () => {
     expect(buildAccessDeniedRedirect("/admin/dashboard")).toBe(
       "/access-denied?next=%2Fadmin%2Fdashboard&reason=admin_required",
     );
+  });
+
+  it("evaluates admin access for each guard outcome", () => {
+    expect(
+      evaluateAdminAccess({
+        currentUser: null,
+        destination: "/admin/audit",
+        config: testConfig,
+      }).type,
+    ).toBe("sign_in");
+
+    expect(
+      evaluateAdminAccess({
+        currentUser: { roles: ["customer"] },
+        destination: "/admin/audit",
+        config: testConfig,
+      }).type,
+    ).toBe("access_denied");
+
+    expect(
+      evaluateAdminAccess({
+        currentUser: { roles: ["admin"] },
+        destination: "/admin/audit",
+        config: testConfig,
+      }).type,
+    ).toBe("allow");
   });
 });

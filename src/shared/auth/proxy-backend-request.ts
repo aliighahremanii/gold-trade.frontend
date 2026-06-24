@@ -12,6 +12,12 @@ import {
   setSessionCookies,
 } from "@/shared/auth/session-cookie";
 import { setMobileVerificationAck } from "@/shared/auth/verification-ack-cookie";
+import {
+  CORRELATION_ID_HEADER,
+  getOrCreateCorrelationId,
+  readOperationReference,
+  REQUEST_ID_HEADER,
+} from "@/shared/observability/correlation-id";
 
 const ALLOWED_PROXY_MODULES: ApiModuleName[] = [
   "identity",
@@ -63,6 +69,10 @@ export async function proxyBackendRequest(
   const targetUrl = `${getModuleBaseUrl(moduleName)}/${pathSegments.join("/")}${requestUrl.search}`;
   const cookieStore = await cookies();
   const headers = new Headers(buildSessionAuthHeaders(cookieStore));
+  const correlationId = getOrCreateCorrelationId(request.headers);
+
+  headers.set(CORRELATION_ID_HEADER, correlationId);
+  headers.set(REQUEST_ID_HEADER, correlationId);
 
   const contentType = request.headers.get("content-type");
 
@@ -136,10 +146,15 @@ export async function proxyBackendRequest(
 
   const responseHeaders = new Headers();
   const backendContentType = backendResponse.headers.get("content-type");
+  const operationReference =
+    readOperationReference(backendResponse.headers) ?? correlationId;
 
   if (backendContentType) {
     responseHeaders.set("content-type", backendContentType);
   }
+
+  responseHeaders.set(CORRELATION_ID_HEADER, operationReference);
+  responseHeaders.set(REQUEST_ID_HEADER, operationReference);
 
   const status = backendResponse.status;
   const hasResponseBody = status !== 204 && status !== 205 && status !== 304;
