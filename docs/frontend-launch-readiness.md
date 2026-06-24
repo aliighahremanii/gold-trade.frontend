@@ -8,18 +8,18 @@
 
 The frontend implements the full MVP route map with thin App Router pages, module-owned flows, generated OpenAPI clients for all 16 backend modules, and strong unit-test coverage for architecture boundaries, financial failure UX, and security helpers.
 
-**Verdict: No-Go** for production launch until CI E2E workflow suites are green again and backend-real smoke validation is executed against staging.
+**Verdict: Conditional No-Go** — CI is green and all mock-API E2E workflows pass, but backend-real staging smoke and formal phase review artifacts remain outstanding before production launch.
 
 | Gate | Status |
 | --- | --- |
 | `bun run lint` | Pass |
 | `bun run typecheck` | Pass |
-| `bun run test` (160 unit tests) | Pass |
-| `bun run build` | Pass |
-| `bun run check:api-drift` | Pass (after regenerate) |
-| `bun run test:e2e` | **Fail** — 15/19 workflow tests failing in CI since 2026-06-24 |
+| `bun run test` (164 unit tests) | Pass |
+| `bun run build` | Pass (28 routes) |
+| `bun run check:api-drift` | Pass |
+| `bun run test:e2e` | **Pass** — 19/19 (4 smoke + 15 workflows) |
 | Backend-real E2E (`E2E_MODE=backend-real`) | Not run in this review |
-| GitHub Actions `frontend-ci` on `main` | **Fail** (last 2 runs) |
+| GitHub Actions `frontend-ci` on `main` | **Pass** (commit `637e311`, 2026-06-24) |
 
 ---
 
@@ -30,10 +30,10 @@ All customer routes compose module flows; pages contain no business logic.
 | Route | Flow | MVP workflow |
 | --- | --- | --- |
 | `/sign-in`, `/sign-up`, `/verify`, `/access-denied` | Identity flows | Auth + OTP/TOTP verification |
-| `/dashboard` | `CustomerDashboardShellFlow` | Portfolio overview |
+| `/dashboard` | `CustomerDashboardShellFlow` | Quick links only (scaffold; live balances on `/wallet`) |
 | `/wallet` | `WalletShellFlow` | Balances (backend-owned TanStack Query) |
 | `/trade/buy`, `/trade/sell` | `BuyGoldShellFlow`, `SellGoldShellFlow` | Quote → confirm → order status |
-| `/orders` | `OrdersShellFlow` | Order history |
+| `/orders` | `OrdersShellFlow` | **Scaffold** — no list endpoint in trading OpenAPI |
 | `/payments/deposit` | `DepositIrrShellFlow` | IRR deposit |
 | `/payments/withdraw`, `/payments/withdraw/[id]` | `WithdrawIrrShellFlow`, `WithdrawIrrDetailFlow` | IRR withdrawal + detail |
 | `/delivery/request`, `/delivery/[id]` | `RequestDeliveryShellFlow`, `DeliveryDetailShellFlow` | Physical delivery |
@@ -119,45 +119,33 @@ All modules are frozen per `docs/api-contracts/mvp-api-contract-map.md`:
 | Security/observability | `40-security-observability-review.md` | Not found |
 | CI/CD production | `50-ci-cd-production-review.md` | Not found |
 
-**Indirect coverage:** `src/test/*.test.ts` (8 files, 160 tests total) exercises scaffold composition, API contract manifest, customer/admin shells, failure-state UX, security helpers, and admin operational mappers. This substitutes for formal review artifacts but does not satisfy the “separate reviewer per phase” process documented in `docs/review/README.md`.
+**Indirect coverage:** 36 unit test files (164 tests) including `src/test/scaffold.test.ts`, `customer-shell.test.ts`, `admin-shell.test.ts`, `failure-state-ux.test.ts`, `security-observability.test.ts`, `api-contract.test.ts`, and module workflow tests. 10 Playwright E2E specs cover smoke, customer trade/payments/delivery, admin pricing/audit/reconciliation, and failure states.
 
 ---
 
 ## Validation results (this review)
 
 ```text
-bun run lint         → exit 0
-bun run typecheck    → exit 0
-bun run test         → 160 passed (35 files)
-bun run build        → exit 0 (28 routes)
-bun run check:api-drift → exit 0 (after regenerate)
-bun run test:e2e     → exit 1
-  smoke:  4/4 pass (on committed HEAD at CI)
-  workflows: 0/15 pass (CI, since commit 1aa2eae)
+bun run lint            → exit 0
+bun run typecheck       → exit 0
+bun run test            → 164 passed (36 files)
+bun run build           → exit 0 (28 routes)
+bun run check:api-drift → exit 0
+bun run test:e2e (CI=1) → exit 0
+  smoke:     4/4 pass
+  workflows: 15/15 pass
 ```
 
-### E2E failure analysis
+### E2E regression (resolved)
 
-**Symptom:** All workflow tests fail at `signIn()` — page remains on `/sign-in` after submit.
+Commit `1aa2eae` introduced production security headers that broke CI E2E (CSP blocked mock API, secure cookies failed over HTTP, server-side API URL pointed at staging). Commit `637e311` resolved this by:
 
-**Regression introduced:** Commit `1aa2eae` (2026-06-24) added production security headers via `next.config.ts` `headers()`. CI E2E was green on `983288b` immediately before.
+- Moving CSP to runtime proxy (`src/proxy.ts`) with `FRONTEND_SECURITY_PROFILE=development` override for E2E
+- Adding `FRONTEND_INSECURE_COOKIES=true` for HTTP-based Playwright runs
+- Preferring `OPENAPI_BASE_URL` on the server (`src/shared/api/config.ts`)
+- Setting mock-API and cookie overrides in `playwright.config.ts`
 
-**Root causes:**
-
-1. **Production CSP baked at build** — With `NODE_ENV=production` during `next start`, production CSP `connect-src` only allows `'self'` and the build-time `NEXT_PUBLIC_API_BASE_URL` (`https://saba.gold`). Playwright mock API runs at `http://127.0.0.1:3099`.
-2. **Secure cookies over HTTP** — `secure: true` session cookies under `next start` are not persisted on `http://127.0.0.1:3001`, so layout guards redirect back to sign-in even when auth API succeeds.
-3. **Server-side API URL** — Auth route handler (`src/app/api/auth/sign-in/route.ts`) proxies to `getModuleBaseUrl("identity")`. Before a server-side `OPENAPI_BASE_URL` override, the baked `NEXT_PUBLIC_*` value pointed at staging during CI E2E.
-4. **`next start` + `output: standalone`** — Next.js warns that `next start` is incompatible with standalone output; CI and local E2E use `next start` today.
-
-**Partial fix in working tree (uncommitted):**
-
-- `src/shared/api/config.ts` — prefer `OPENAPI_BASE_URL` on server
-- `src/shared/auth/session-cookie.ts` — `FRONTEND_INSECURE_COOKIES` override
-- `src/shared/config/security-headers.ts` — `FRONTEND_SECURITY_PROFILE=development` override
-- `playwright.config.ts` — E2E server env overrides
-- `src/proxy.ts` — move security headers to runtime proxy (respects overrides)
-
-These changes must be committed, validated end-to-end, and CI must be green before launch.
+**Remaining E2E note:** CI still uses `next start` with `output: standalone`, which Next.js warns is incompatible. Tests pass today; consider switching CI to `node .next/standalone/server.js` for production parity.
 
 ---
 
@@ -165,10 +153,10 @@ These changes must be committed, validated end-to-end, and CI must be green befo
 
 | # | Severity | Blocker | Recommended fix |
 | --- | --- | --- | --- |
-| B1 | **Critical** | CI E2E workflow suite failing (15 tests) | Land E2E compatibility fixes; verify `frontend-ci` green |
-| B2 | **Critical** | No backend-real E2E run against staging | Run `E2E_MODE=backend-real` with staging credentials before launch |
-| B3 | **High** | Phase review artifacts missing (01–50) | Run review prompts with separate reviewer agent or accept risk with documented unit/E2E coverage |
-| B4 | **Medium** | `next start` vs standalone output mismatch | Update Playwright/CI to use `node .next/standalone/server.js` or document dev-mode E2E for CI |
+| B1 | **Critical** | No backend-real E2E run against staging | Run `E2E_MODE=backend-real` with staging customer credentials before launch |
+| B2 | **High** | Phase review artifacts missing (01–50) | Run review prompts with separate reviewer agent or accept risk with documented unit/E2E coverage |
+| B3 | **Medium** | Customer `/orders` page is scaffold | Add backend list-orders endpoint or accept MVP without order history |
+| B4 | **Low** | `next start` vs standalone output mismatch | Update Playwright/CI to use `node .next/standalone/server.js` for production parity |
 
 ---
 
@@ -176,6 +164,7 @@ These changes must be committed, validated end-to-end, and CI must be green befo
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
+| `/orders` scaffold | No customer order history UI | Backend trading OpenAPI has no list-orders GET; only `POST /orders` and `GET /orders/{id}` |
 | `notification` module has no UI | Users cannot see notification delivery status | Accept for MVP; add post-launch if ops requires it |
 | `settlement` hook unused | Settlement detail only via order/payment status fields | Confirm backend surfaces sufficient status in trading/payments responses |
 | `assets` module scaffold-only | No dedicated asset metadata page | Wallet/trading displays use wallet/pricing APIs |
@@ -190,7 +179,7 @@ These changes must be committed, validated end-to-end, and CI must be green befo
 | Item | Status |
 | --- | --- |
 | `frontend-ci.yml` — lint, typecheck, test, build, api-drift | Configured |
-| E2E in CI | **Failing** |
+| E2E in CI | **Passing** (19 tests, commit `637e311`) |
 | Docker standalone image | `Dockerfile` + `ci-cd/` examples present |
 | Security headers | Implemented (proxy or next.config) |
 | Playwright artifacts on failure | Configured (14-day retention) |
@@ -200,16 +189,17 @@ These changes must be committed, validated end-to-end, and CI must be green befo
 
 ## Go / No-Go recommendation
 
-### **No-Go**
+### **Conditional No-Go**
 
-The frontend codebase is structurally ready for MVP: routes, flows, contracts, and unit tests align with `AGENTS.md` and `docs/architecture.md`. However, **CI is red on E2E workflow tests** since the security-headers change, and **backend-real validation has not been executed** in this review cycle.
+The frontend codebase is structurally ready for MVP: all required routes exist, money-moving flows are implemented with explicit backend-owned states, generated API clients cover 16 modules, and **CI is green** including all 19 Playwright workflow tests.
+
+Launch is blocked only by **unvalidated staging integration** (backend-real smoke) and **missing formal phase review artifacts** (prompts 01–50). Product gaps (`/orders` scaffold, thin `/dashboard`) are acceptable for MVP if stakeholders agree.
 
 ### Conditions for Go
 
-1. Commit and verify E2E compatibility fixes (API base URL, cookie security profile, CSP override for E2E).
-2. `frontend-ci` green on `main` including all 19 Playwright tests.
-3. Backend-real smoke suite passes against staging (`test/e2e/backend-real/customer-smoke.spec.ts`).
-4. Stakeholder sign-off on missing phase review artifacts or completion of outstanding review prompts.
+1. Backend-real smoke suite passes against staging (`test/e2e/backend-real/customer-smoke.spec.ts`).
+2. Stakeholder sign-off on missing phase review artifacts or completion of outstanding review prompts.
+3. Ops acceptance of `/orders` scaffold until backend exposes a customer order-list endpoint.
 
 ---
 
@@ -217,9 +207,9 @@ The frontend codebase is structurally ready for MVP: routes, flows, contracts, a
 
 | File | Action |
 | --- | --- |
-| `docs/frontend-launch-readiness.md` | **Created** (this report) |
+| `docs/frontend-launch-readiness.md` | **Updated** (this report) |
 
-No application code was committed during this review. Uncommitted working-tree fixes exist for E2E regression (see E2E failure analysis).
+No application code was changed during this review pass. E2E fixes were already committed in `637e311`.
 
 ---
 
@@ -229,4 +219,5 @@ No application code was committed during this review. Uncommitted working-tree f
 - Mock API (`test/e2e/mock-api/server.mjs`) accurately simulates MVP state transitions for CI workflow tests.
 - Backend enforces authorization; frontend guards are UX boundaries only.
 - `ProblemFieldError` / `ProblemResponse` patches in `contracts/openapi/problem-schema-compatibility.json` remain valid until backend OpenAPI includes those schemas.
+- Trading OpenAPI has no customer order-list endpoint; `/orders` remains a scaffold until backend adds one.
 - Physical delivery, manual review, and reconciliation states match backend enum values consumed by mappers.
